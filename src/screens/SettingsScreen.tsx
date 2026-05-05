@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
-  ArrowLeft, 
   Globe, 
   ChevronRight, 
   Sun,
@@ -11,7 +10,13 @@ import {
   Trash2,
   ShieldCheck,
   Languages,
-  ArrowDown
+  Volume2,
+  Zap,
+  Clock,
+  HelpCircle,
+  LogOut,
+  ChevronDown,
+  User
 } from 'lucide-react';
 
 interface SettingsScreenProps {
@@ -21,103 +26,180 @@ interface SettingsScreenProps {
 }
 
 export default function SettingsScreen({ isDarkMode, setIsDarkMode, defaultLanguage }: SettingsScreenProps) {
-  return (
-    <div className={`min-h-screen pb-10 transition-colors ${isDarkMode ? 'bg-zinc-950' : 'bg-white'}`}>
-      <div className="px-6 py-10 space-y-10 max-w-md mx-auto">
-        {/* Profile Card / Title */}
-        <div className="flex flex-col items-center">
-          <div className="w-20 h-20 bg-surface-card rounded-[2rem] border border-surface-border flex items-center justify-center p-1 shadow-2xl mb-6">
-            <div className="w-full h-full bg-indigo-500/10 rounded-full flex items-center justify-center text-indigo-500">
-              <Globe className="w-8 h-8" />
-            </div>
-          </div>
-          <h2 className="text-3xl font-black tracking-tighter">Configurações</h2>
-          <p className="text-text-muted text-[10px] font-bold uppercase tracking-[0.2em] mt-2 text-center">Personalize sua experiência</p>
-        </div>
+  const [voiceSpeed, setVoiceSpeed] = useState(1.0);
+  const [autoTranslate, setAutoTranslate] = useState(true);
+  const [notifications, setNotifications] = useState(true);
 
-        {/* Theme Settings */}
-        <section className="space-y-4">
-           <h3 className="text-xs font-black uppercase tracking-widest text-text-muted ml-1">Aparência</h3>
-           <button 
-             onClick={() => setIsDarkMode(!isDarkMode)}
-             className={`w-full p-6 rounded-3xl border shadow-xl transition-all flex items-center justify-between group ${
-               isDarkMode ? 'bg-surface-card border-surface-border hover:border-indigo-500/30' : 'bg-white border-indigo-100 hover:border-indigo-300'
-             }`}
-           >
-             <div className="flex items-center gap-5">
-               <div className={`w-12 h-12 border rounded-2xl flex items-center justify-center text-indigo-500 ${
-                 isDarkMode ? 'bg-zinc-800 border-zinc-700' : 'bg-indigo-50 border-indigo-100'
-               }`}>
-                  {isDarkMode ? <Moon className="w-6 h-6" /> : <Sun className="w-6 h-6" />}
-               </div>
-               <div className="text-left">
-                 <p className="text-[10px] font-black text-text-muted uppercase tracking-widest mb-1">Modo de Exibição</p>
-                 <p className="font-bold tracking-tight">{isDarkMode ? 'Modo Escuro' : 'Modo Claro'}</p>
-               </div>
-             </div>
-             {isDarkMode ? <ToggleRight className="w-8 h-8 text-indigo-500" /> : <ToggleLeft className="w-8 h-8 text-indigo-400" />}
-           </button>
+  return (
+    <div className={`min-h-screen pb-20 transition-colors ${isDarkMode ? 'bg-surface' : 'bg-slate-50'}`}>
+      <div className="px-6 py-10 space-y-8 max-w-md mx-auto">
+        
+        {/* User Profile Section */}
+        <section className={`p-6 rounded-[2.5rem] border transition-all flex items-center gap-5 ai-glow ${
+          isDarkMode ? 'bg-surface-card border-white/5' : 'bg-white border-slate-200'
+        }`}>
+          <div className="relative">
+            <div className={`w-16 h-16 rounded-[1.5rem] flex items-center justify-center border-2 border-indigo-500/30 ${isDarkMode ? 'bg-white/5' : 'bg-indigo-50'}`}>
+              <User className="w-8 h-8 text-indigo-500" />
+            </div>
+            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 border-2 border-surface rounded-full" />
+          </div>
+          <div className="flex-1">
+            <h2 className="text-xl font-black tracking-tight">Gustavo Lima</h2>
+            <p className="text-[10px] font-black uppercase tracking-widest text-indigo-500">Membro Premium</p>
+          </div>
+          <button className={`p-2 rounded-xl transition-colors ${isDarkMode ? 'hover:bg-white/5 text-zinc-500' : 'hover:bg-slate-100 text-slate-400'}`}>
+            <ChevronDown className="w-5 h-5" />
+          </button>
         </section>
 
-        {/* Language Settings */}
-        <section className="space-y-4">
-          <h3 className="text-xs font-black uppercase tracking-widest text-text-muted ml-1">Idioma Padrão</h3>
-          <div className="grid grid-cols-1 gap-4">
-            <div className={`p-6 rounded-3xl border shadow-xl transition-all flex items-center justify-between group cursor-pointer ${
-              isDarkMode ? 'bg-surface-card border-surface-border hover:border-indigo-500/30' : 'bg-white border-indigo-100 hover:border-indigo-300'
-            }`}>
-              <div className="flex items-center gap-5">
-                <div className={`w-12 h-12 border rounded-2xl flex items-center justify-center text-indigo-500 ${
-                  isDarkMode ? 'bg-zinc-800 border-zinc-700' : 'bg-indigo-50 border-indigo-100'
-                }`}>
-                  <Languages className="w-6 h-6" />
+        {/* Appearance Settings */}
+        <div className="space-y-4">
+          <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-text-muted ml-4">Preferências de Interface</h3>
+          <div className={`p-4 rounded-[2.5rem] border ${isDarkMode ? 'bg-surface-card border-white/5' : 'bg-white border-slate-200 shadow-sm'}`}>
+            <div className={`flex p-1 rounded-2xl ${isDarkMode ? 'bg-white/5' : 'bg-slate-100'}`}>
+              <button 
+                onClick={() => setIsDarkMode(false)}
+                className={`flex-1 flex items-center justify-center gap-3 py-3 rounded-xl font-bold text-sm transition-all ${
+                  !isDarkMode 
+                    ? 'bg-white text-indigo-600 shadow-md scale-[1.02]' 
+                    : 'text-zinc-500 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                <Sun className={`w-4 h-4 ${!isDarkMode ? 'text-orange-500' : ''}`} />
+                Modo Claro
+              </button>
+              <button 
+                onClick={() => setIsDarkMode(true)}
+                className={`flex-1 flex items-center justify-center gap-3 py-3 rounded-xl font-bold text-sm transition-all ${
+                  isDarkMode 
+                    ? 'bg-indigo-600 text-white shadow-lg scale-[1.02]' 
+                    : 'text-slate-400 hover:text-indigo-600 hover:bg-white'
+                }`}
+              >
+                <Moon className={`w-4 h-4 ${isDarkMode ? 'text-indigo-200' : ''}`} />
+                Modo Dark
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Other System Settings */}
+        <div className="space-y-4">
+          <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-text-muted ml-4">Personalização de Sistema</h3>
+          <div className={`rounded-[2.5rem] border overflow-hidden ${isDarkMode ? 'bg-surface-card border-white/5' : 'bg-white border-slate-200'}`}>
+            <button 
+              className={`w-full p-6 transition-all flex items-center justify-between group border-b ${isDarkMode ? 'border-white/5 hover:bg-white/[0.02]' : 'border-slate-100 hover:bg-slate-50'}`}
+              onClick={() => setNotifications(!notifications)}
+            >
+              <div className="flex items-center gap-4">
+                <div className={`p-3 rounded-2xl ${isDarkMode ? 'bg-violet-500/10 text-violet-400' : 'bg-violet-50 text-violet-600'}`}>
+                  <Bell className="w-5 h-5" />
                 </div>
-                <div>
-                  <p className="text-[10px] font-black text-text-muted uppercase tracking-widest mb-1">Saída</p>
-                  <p className="font-bold tracking-tight">{defaultLanguage}</p>
+                <div className="text-left">
+                  <p className="font-bold tracking-tight text-sm">Notificações</p>
+                  <p className="text-[10px] text-text-muted font-medium uppercase tracking-widest">Alertas e Dicas de IA</p>
                 </div>
               </div>
-              <ChevronRight className="w-5 h-5 text-text-muted group-hover:text-indigo-500 transition-all transform group-hover:translate-x-1" />
-            </div>
-          </div>
-        </section>
-
-        {/* Stats / Info */}
-        <div className="grid grid-cols-2 gap-4">
-          <div className={`border p-6 rounded-3xl flex flex-col justify-between h-32 transition-colors ${
-            isDarkMode ? 'bg-surface-card border-surface-border hover:bg-zinc-800' : 'bg-indigo-50/50 border-indigo-100 hover:bg-indigo-50'
-          }`}>
-             <ArrowDown className="w-5 h-5 text-indigo-500" />
-             <div>
-               <p className="text-[10px] font-black text-text-muted uppercase tracking-widest mb-1">Backup</p>
-               <p className="font-bold text-sm tracking-tight text-text-main">Ativado</p>
-             </div>
-          </div>
-          <div className="bg-indigo-600 p-6 rounded-3xl flex flex-col justify-between h-32 shadow-xl shadow-indigo-900/20 group cursor-pointer">
-             <div className="w-5 h-5 bg-white/20 rounded flex items-center justify-center">
-               <ShieldCheck className="w-3 h-3 text-white" />
-             </div>
-             <div>
-               <p className="text-[10px] font-black text-indigo-200 uppercase tracking-widest mb-1">Acesso</p>
-               <p className="font-bold text-sm text-white tracking-tight uppercase">Premium</p>
-             </div>
+              {notifications ? <ToggleRight className="w-8 h-8 text-indigo-500" /> : <ToggleLeft className="w-8 h-8 text-slate-300" />}
+            </button>
           </div>
         </div>
 
-        {/* Action Button */}
-        <div className="space-y-6 pt-6 text-center">
-          <button className="w-full bg-indigo-600 text-white py-5 rounded-[1.5rem] font-bold text-sm hover:bg-indigo-500 transition-all shadow-xl active:scale-95 tracking-tight">
-            Exportar Dados
-          </button>
-          
-          <div className="flex flex-col items-center gap-3 opacity-20 hover:opacity-50 transition-opacity">
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4" />
-              <span className="text-[10px] font-black uppercase tracking-widest">Protocolo Traduza v2.1.0</span>
+        {/* Translation Engine Settings */}
+        <div className="space-y-4">
+          <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-text-muted ml-4">Motor de Tradução</h3>
+          <div className={`rounded-[2.5rem] border overflow-hidden ${isDarkMode ? 'bg-surface-card border-white/5' : 'bg-white border-slate-200'}`}>
+            <div className={`p-6 border-b ${isDarkMode ? 'border-white/5' : 'border-slate-100'}`}>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-4">
+                  <div className={`p-3 rounded-2xl ${isDarkMode ? 'bg-orange-500/10 text-orange-400' : 'bg-orange-50 text-orange-600'}`}>
+                    <Volume2 className="w-5 h-5" />
+                  </div>
+                  <div className="text-left">
+                    <p className="font-bold tracking-tight text-sm">Velocidade da Voz</p>
+                    <p className="text-[10px] text-text-muted font-medium uppercase tracking-widest">{voiceSpeed.toFixed(1)}x Reprodução</p>
+                  </div>
+                </div>
+              </div>
+              <input 
+                type="range" 
+                min="0.5" 
+                max="2.0" 
+                step="0.1" 
+                value={voiceSpeed}
+                onChange={(e) => setVoiceSpeed(parseFloat(e.target.value))}
+                className="w-full h-1.5 bg-indigo-500/20 rounded-full appearance-none cursor-pointer accent-indigo-500"
+              />
             </div>
-            <p className="text-[10px] font-mono tracking-tighter">SECURE • ENCRYPTED • GLOBAL</p>
+
+            <button 
+              className={`w-full p-6 transition-all flex items-center justify-between group ${isDarkMode ? 'hover:bg-white/[0.02]' : 'hover:bg-slate-50'}`}
+              onClick={() => setAutoTranslate(!autoTranslate)}
+            >
+              <div className="flex items-center gap-4">
+                <div className={`p-3 rounded-2xl ${isDarkMode ? 'bg-cyan-500/10 text-cyan-400' : 'bg-cyan-50 text-cyan-600'}`}>
+                  <Zap className="w-5 h-5" />
+                </div>
+                <div className="text-left">
+                  <p className="font-bold tracking-tight text-sm">Auto-Traduzir</p>
+                  <p className="text-[10px] text-text-muted font-medium uppercase tracking-widest">Processamento Instantâneo</p>
+                </div>
+              </div>
+              {autoTranslate ? <ToggleRight className="w-8 h-8 text-indigo-500" /> : <ToggleLeft className="w-8 h-8 text-slate-300" />}
+            </button>
           </div>
         </div>
+
+        {/* Data & Privacy */}
+        <div className="space-y-4">
+          <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-text-muted ml-4">Dados e Segurança</h3>
+          <div className="grid grid-cols-1 gap-3">
+             <button className={`w-full p-5 rounded-3xl border flex items-center justify-between transition-all group ${
+               isDarkMode ? 'bg-surface-card border-white/5 hover:bg-white/[0.02]' : 'bg-white border-slate-200 hover:bg-slate-50'
+             }`}>
+                <div className="flex items-center gap-4">
+                  <div className={`p-2.5 rounded-xl ${isDarkMode ? 'bg-zinc-800 text-zinc-400' : 'bg-slate-100 text-slate-500'}`}>
+                    <Clock className="w-4 h-4" />
+                  </div>
+                  <span className="text-sm font-bold tracking-tight">Limpar Histórico</span>
+                </div>
+                <ChevronRight className="w-4 h-4 text-text-muted opacity-0 group-hover:opacity-100 transition-all translate-x-[-10px] group-hover:translate-x-0" />
+             </button>
+
+             <button className={`w-full p-5 rounded-3xl border flex items-center justify-between transition-all group ${
+               isDarkMode ? 'bg-surface-card border-white/5 hover:bg-white/[0.02]' : 'bg-white border-slate-200 hover:bg-slate-50'
+             }`}>
+                <div className="flex items-center gap-4">
+                  <div className={`p-2.5 rounded-xl ${isDarkMode ? 'bg-zinc-800 text-zinc-400' : 'bg-slate-100 text-slate-500'}`}>
+                    <HelpCircle className="w-4 h-4" />
+                  </div>
+                  <span className="text-sm font-bold tracking-tight">Suporte e Ajuda</span>
+                </div>
+                <ChevronRight className="w-4 h-4 text-text-muted opacity-0 group-hover:opacity-100 transition-all translate-x-[-10px] group-hover:translate-x-0" />
+             </button>
+
+             <button className={`w-full p-5 rounded-3xl border flex items-center justify-between transition-all group ${
+               isDarkMode ? 'bg-surface-card border-white/5 hover:bg-red-500/5' : 'bg-white border-slate-200 hover:bg-red-50'
+             }`}>
+                <div className="flex items-center gap-4 text-red-500">
+                  <div className={`p-2.5 rounded-xl ${isDarkMode ? 'bg-red-500/10' : 'bg-red-100'}`}>
+                    <LogOut className="w-4 h-4" />
+                  </div>
+                  <span className="text-sm font-bold tracking-tight">Sair da Conta</span>
+                </div>
+             </button>
+          </div>
+        </div>
+
+        {/* Footer Info */}
+        <div className="pt-10 pb-4 text-center space-y-4">
+          <div className="flex flex-col items-center gap-2 opacity-30">
+            <Languages className="w-6 h-6 text-indigo-500" />
+            <p className="text-[10px] font-black uppercase tracking-[0.3em]">Traduza.AI Neural Core v2.5.4</p>
+          </div>
+        </div>
+
       </div>
     </div>
   );

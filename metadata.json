@@ -1,6 +1,6 @@
 {
   "name": "Traduza.AI",
-  "description": "A modern, AI-powered translation app with real-time text, voice, and camera translation capabilities.",
+  "description": "Aplicativo de tradução inteligente impulsionado por IA com suporte a voz, câmera e chat em tempo real.",
   "requestFramePermissions": [
     "camera",
     "microphone"

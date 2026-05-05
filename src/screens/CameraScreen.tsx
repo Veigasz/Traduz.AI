@@ -48,9 +48,9 @@ export default function CameraScreen({ isDarkMode }: CameraScreenProps) {
   const captureFrame = async () => {
     if (!videoRef.current || !canvasRef.current || isTranslating) return;
 
-    setIsTranslating(true);
     setFlash(true);
-    setTimeout(() => setFlash(false), 150);
+    setTimeout(() => setFlash(false), 50); // Pico muito curto
+    setIsTranslating(true);
 
     const canvas = canvasRef.current;
     const video = videoRef.current;
@@ -78,18 +78,6 @@ export default function CameraScreen({ isDarkMode }: CameraScreenProps) {
     <div className={`flex flex-col items-center px-6 h-full flex-1 transition-colors relative overflow-hidden ${
       isDarkMode ? 'bg-zinc-950' : 'bg-indigo-50/20'
     }`}>
-      {/* Flash Effect */}
-      <AnimatePresence>
-        {flash && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-white z-[100] pointer-events-none"
-          />
-        )}
-      </AnimatePresence>
-
       {/* Instructional Header */}
       <div className="w-full max-w-md mb-8 text-center mt-6 z-10">
         <p className={`text-2xl font-bold tracking-tighter mb-2 ${isDarkMode ? 'text-white' : 'text-indigo-950'}`}>Câmera em tempo real</p>
@@ -112,6 +100,19 @@ export default function CameraScreen({ isDarkMode }: CameraScreenProps) {
             isDarkMode ? 'grayscale' : 'grayscale-0'
           } ${isStreaming ? 'opacity-100' : 'opacity-0'}`}
         />
+
+        {/* Improved Flash Effect Overlay */}
+        <AnimatePresence>
+          {flash && (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.1 }}
+              className="absolute inset-0 bg-white z-[60] pointer-events-none"
+            />
+          )}
+        </AnimatePresence>
         
         {!isStreaming && !error && (
           <div className="absolute inset-0 flex items-center justify-center">
@@ -171,7 +172,9 @@ export default function CameraScreen({ isDarkMode }: CameraScreenProps) {
       {/* Controls */}
       <div className="mt-10 w-full max-w-md flex flex-col items-center gap-8 pb-10 z-10">
         <div className="flex items-center justify-center gap-10">
-          <button className={`w-12 h-12 rounded-2xl border flex items-center justify-center transition-all shadow-lg active:scale-90 ${
+          <button 
+            aria-label="Ativar Flash da Câmera"
+            className={`w-12 h-12 rounded-2xl border flex items-center justify-center transition-all shadow-lg active:scale-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
             isDarkMode ? 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:bg-zinc-800 hover:text-white' : 'bg-white border-indigo-100 text-indigo-400 hover:bg-indigo-50'
           }`}>
             <Zap className="w-5 h-5" />
@@ -180,8 +183,9 @@ export default function CameraScreen({ isDarkMode }: CameraScreenProps) {
           <button 
             onClick={captureFrame}
             disabled={!isStreaming || isTranslating}
-            className={`w-24 h-24 rounded-full p-2 shadow-2xl active:scale-95 transition-all border group relative ${
-              isDarkMode ? 'bg-zinc-900 border-zinc-800' : 'bg-white border-indigo-100'
+            aria-label="Capturar e Traduzir"
+            className={`w-24 h-24 rounded-full p-2 shadow-2xl active:scale-95 transition-all border group relative focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 focus-visible:ring-offset-4 ${
+              isDarkMode ? 'bg-zinc-900 border-zinc-800 focus-visible:ring-offset-zinc-950' : 'bg-white border-indigo-100 focus-visible:ring-offset-white'
             } ${isTranslating ? 'opacity-50' : ''}`}
           >
             <div className={`w-full h-full rounded-full border-4 flex items-center justify-center transition-colors ${
@@ -198,7 +202,8 @@ export default function CameraScreen({ isDarkMode }: CameraScreenProps) {
               stopCamera();
               startCamera();
             }}
-            className={`w-12 h-12 rounded-2xl border flex items-center justify-center transition-all shadow-lg active:scale-90 ${
+            aria-label="Reiniciar Câmera"
+            className={`w-12 h-12 rounded-2xl border flex items-center justify-center transition-all shadow-lg active:scale-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
               isDarkMode ? 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:bg-zinc-800 hover:text-white' : 'bg-white border-indigo-100 text-indigo-400 hover:bg-indigo-50'
             }`}
           >
@@ -206,7 +211,9 @@ export default function CameraScreen({ isDarkMode }: CameraScreenProps) {
           </button>
         </div>
 
-        <button className={`flex items-center justify-center gap-3 py-5 px-12 rounded-2xl font-bold uppercase text-[10px] tracking-[0.3em] transition-all active:scale-95 shadow-xl group border ${
+        <button 
+          aria-label="Carregar foto da galeria"
+          className={`flex items-center justify-center gap-3 py-5 px-12 rounded-2xl font-bold uppercase text-[10px] tracking-[0.3em] transition-all active:scale-95 shadow-xl group border focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
            isDarkMode 
             ? 'bg-zinc-900 border-zinc-800 text-zinc-100 hover:bg-zinc-800' 
             : 'bg-white border-indigo-100 text-indigo-900 hover:bg-indigo-50 shadow-indigo-200/50'

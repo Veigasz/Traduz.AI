@@ -1,5 +1,18 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Languages, ArrowLeftRight, History, X, Plus, MessageSquare, Trash2, Copy, Clock } from 'lucide-react';
+import { 
+  Send, 
+  Languages, 
+  ArrowLeftRight, 
+  History, 
+  X, 
+  Plus, 
+  MessageSquare, 
+  Trash2, 
+  Copy, 
+  Clock,
+  ThumbsUp,
+  ThumbsDown
+} from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { chatAssistant } from '../services/geminiService';
 
@@ -8,6 +21,7 @@ interface Message {
   text: string;
   sender: 'user' | 'bot';
   timestamp: string;
+  feedback?: 'positive' | 'negative' | null;
 }
 
 interface ChatSession {
@@ -155,14 +169,30 @@ export default function ChatScreen({ isDarkMode }: ChatScreenProps) {
     navigator.clipboard.writeText(text);
   };
 
+  const handleFeedback = (messageId: string, type: 'positive' | 'negative') => {
+    setMessages(prev => prev.map(msg => {
+      if (msg.id === messageId) {
+        // Toggle if clicking same feedback
+        const newFeedback = msg.feedback === type ? null : type;
+        return { ...msg, feedback: newFeedback };
+      }
+      return msg;
+    }));
+  };
+
   return (
     <div className={`flex flex-col h-full transition-colors relative ${isDarkMode ? 'bg-zinc-950/50' : 'bg-indigo-50/20'}`}>
       {/* Header with History Toggle */}
-      <div className={`p-4 flex items-center justify-between border-b ${isDarkMode ? 'border-white/5 bg-zinc-950/50' : 'border-indigo-100 bg-white/50'} backdrop-blur-md sticky top-0 z-20`}>
+      <div 
+        role="region" 
+        aria-label="Controles do Chat"
+        className={`p-4 flex items-center justify-between border-b ${isDarkMode ? 'border-white/5 bg-zinc-950/50' : 'border-indigo-100 bg-white/50'} backdrop-blur-md sticky top-0 z-20`}>
         <div className="flex items-center gap-3">
           <button 
             onClick={() => setShowHistory(!showHistory)}
-            className={`p-2 rounded-xl transition-colors ${isDarkMode ? 'hover:bg-zinc-900 text-zinc-400' : 'hover:bg-indigo-50 text-indigo-400'}`}
+            aria-label="Ver histórico de conversas"
+            aria-expanded={showHistory}
+            className={`p-2 rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${isDarkMode ? 'hover:bg-zinc-900 text-zinc-400' : 'hover:bg-indigo-50 text-indigo-400'}`}
           >
             <History className="w-5 h-5" />
           </button>
@@ -173,7 +203,8 @@ export default function ChatScreen({ isDarkMode }: ChatScreenProps) {
         </div>
         <button 
           onClick={startNewChat}
-          className="p-2.5 bg-indigo-600 text-white rounded-xl shadow-lg shadow-indigo-600/20 active:scale-95 transition-all"
+          aria-label="Iniciar nova conversa"
+          className="p-2.5 bg-indigo-600 text-white rounded-xl shadow-lg shadow-indigo-600/20 active:scale-95 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
         >
           <Plus className="w-4 h-4" />
         </button>
@@ -294,7 +325,7 @@ export default function ChatScreen({ isDarkMode }: ChatScreenProps) {
               {msg.sender === 'user' ? 'Você' : 'Traduza.AI'}
             </span>
             <div 
-              className={`max-w-[85%] px-6 py-5 rounded-3xl shadow-xl transition-all hover:scale-[1.01] ${
+              className={`max-w-[85%] px-6 py-5 rounded-3xl shadow-xl transition-all hover:scale-[1.01] relative group ${
                 msg.sender === 'user' 
                 ? 'bg-indigo-600 text-white rounded-tr-none shadow-indigo-900/10' 
                 : isDarkMode 
@@ -303,10 +334,38 @@ export default function ChatScreen({ isDarkMode }: ChatScreenProps) {
               }`}
             >
               <p className="text-[15px] leading-relaxed whitespace-pre-wrap font-medium">{msg.text}</p>
-              <div className={`mt-3 text-[10px] font-mono tracking-tighter text-right opacity-70 ${
-                msg.sender === 'user' ? 'text-indigo-100' : isDarkMode ? 'text-zinc-500' : 'text-indigo-300'
-              }`}>
-                {msg.timestamp}
+              
+              <div className="flex items-center justify-between mt-3">
+                {msg.sender === 'bot' && (
+                  <div className="flex items-center gap-1">
+                    <button 
+                      onClick={() => handleFeedback(msg.id, 'positive')}
+                      className={`p-1.5 rounded-lg transition-all ${
+                        msg.feedback === 'positive' 
+                          ? 'bg-green-500/10 text-green-500' 
+                          : isDarkMode ? 'text-zinc-600 hover:text-zinc-400' : 'text-indigo-200 hover:text-indigo-400'
+                      }`}
+                    >
+                      <ThumbsUp className="w-3.5 h-3.5" />
+                    </button>
+                    <button 
+                      onClick={() => handleFeedback(msg.id, 'negative')}
+                      className={`p-1.5 rounded-lg transition-all ${
+                        msg.feedback === 'negative' 
+                          ? 'bg-red-500/10 text-red-500' 
+                          : isDarkMode ? 'text-zinc-600 hover:text-zinc-400' : 'text-indigo-200 hover:text-indigo-400'
+                      }`}
+                    >
+                      <ThumbsDown className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                )}
+                
+                <div className={`text-[10px] font-mono tracking-tighter text-right opacity-70 ml-auto ${
+                  msg.sender === 'user' ? 'text-indigo-100' : isDarkMode ? 'text-zinc-500' : 'text-indigo-300'
+                }`}>
+                  {msg.timestamp}
+                </div>
               </div>
             </div>
           </div>
@@ -374,7 +433,9 @@ export default function ChatScreen({ isDarkMode }: ChatScreenProps) {
               ? 'bg-zinc-900 border-zinc-800 shadow-2xl shadow-black/40 focus-within:border-indigo-500/50' 
               : 'bg-white border-indigo-100 shadow-2xl shadow-indigo-200/50 focus-within:border-indigo-400'
           }`}>
-            <button className={`p-4 transition-colors ${isDarkMode ? 'text-zinc-500 hover:text-indigo-400' : 'text-indigo-300 hover:text-indigo-600'}`}>
+            <button 
+              aria-label="Opções de Idioma"
+              className={`p-4 transition-colors rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${isDarkMode ? 'text-zinc-500 hover:text-indigo-400' : 'text-indigo-300 hover:text-indigo-600'}`}>
               <Languages className="w-5 h-5" />
             </button>
             <input 
@@ -382,13 +443,15 @@ export default function ChatScreen({ isDarkMode }: ChatScreenProps) {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSend()}
               placeholder="Digite aqui..." 
+              aria-label="Mensagem do chat"
               className={`flex-1 bg-transparent border-none focus:ring-0 text-sm font-medium outline-none ${
                 isDarkMode ? 'text-white placeholder-zinc-700' : 'text-indigo-950 placeholder-indigo-200'
               }`}
             />
             <button 
               onClick={handleSend}
-              className="p-4 bg-indigo-600 text-white rounded-full shadow-xl shadow-indigo-900/20 hover:bg-indigo-500 active:scale-95 transition-all"
+              aria-label="Enviar mensagem"
+              className="p-4 bg-indigo-600 text-white rounded-full shadow-xl shadow-indigo-900/20 hover:bg-indigo-500 active:scale-95 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
             >
               <Send className="w-5 h-5" />
             </button>

@@ -84,12 +84,14 @@ export default function FavoritesScreen({ defaultLanguage, onSetDefaultLanguage,
               <button
                 key={lang}
                 onClick={() => onSetDefaultLanguage(lang)}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-bold transition-all shadow-sm ${
+                aria-label={`Definir ${lang} como idioma padrão`}
+                aria-pressed={isDefault}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-bold transition-all shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 ${
                   isDefault 
                     ? 'bg-indigo-600 border-indigo-500 text-white shadow-indigo-500/20' 
                     : isDarkMode 
-                      ? 'bg-surface-card border-surface-border text-text-main hover:border-indigo-500/50' 
-                      : 'bg-indigo-50 border-indigo-100 text-indigo-700 hover:border-indigo-300 hover:bg-white'
+                      ? 'bg-surface-card border-surface-border text-text-main hover:border-indigo-500/50 focus-visible:ring-offset-zinc-950' 
+                      : 'bg-indigo-50 border-indigo-100 text-indigo-700 hover:border-indigo-300 hover:bg-white focus-visible:ring-offset-white'
                 }`}
               >
                 <LangIcon className="w-4 h-4 opacity-70" />
@@ -105,7 +107,7 @@ export default function FavoritesScreen({ defaultLanguage, onSetDefaultLanguage,
       <section className="space-y-4 pb-12">
         <div className="flex items-center justify-between">
            <h3 className="text-xs font-black uppercase tracking-widest text-text-muted">Traduções Salvas</h3>
-           {favorites.length > 0 && <span className="text-[10px] font-bold text-indigo-500">{favorites.length} itens</span>}
+           {favorites.length > 0 && <span className="text-[10px] font-bold text-indigo-500" aria-label={`${favorites.length} itens salvos`}>{favorites.length} itens</span>}
         </div>
         
         <div className="space-y-4">
@@ -136,7 +138,8 @@ export default function FavoritesScreen({ defaultLanguage, onSetDefaultLanguage,
                     <span className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em]">{item.lang}</span>
                     <button 
                       onClick={() => removeFavorite(item.id)}
-                      className="text-red-500 hover:scale-110 transition-transform p-2 bg-red-500/10 rounded-full"
+                      aria-label={`Remover tradução de ${item.original}`}
+                      className="text-red-500 hover:scale-110 transition-transform p-2 bg-red-500/10 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>

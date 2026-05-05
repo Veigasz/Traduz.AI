@@ -1,0 +1,9 @@
+{
+  "name": "Traduza.AI",
+  "description": "A modern, AI-powered translation app with real-time text, voice, and camera translation capabilities.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ],
+  "majorCapabilities": []
+}

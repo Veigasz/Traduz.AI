@@ -13,16 +13,46 @@ export function getGeminiModel() {
   return ai;
 }
 
-export async function translateText(text: string, sourceLang: string, targetLang: string) {
+export type TranslationMode = 'Standard' | 'Formal' | 'Casual' | 'Literal';
+
+export async function translateText(
+  text: string, 
+  sourceLang: string, 
+  targetLang: string, 
+  mode: TranslationMode = 'Standard'
+) {
   const client = getGeminiModel();
-  const prompt = `Translate the following text from ${sourceLang} to ${targetLang}. Only provide the translation itself without any extra explanations: "${text}"`;
   
+  const systemPrompt = `You are Traduza.AI, a high-quality translation engine. 
+  Your goal is to translate text from ${sourceLang === 'Auto' ? 'the detected language' : sourceLang} to ${targetLang}.
+  
+  MODE: ${mode}
+  - Standard: Neutral, accurate, and natural.
+  - Formal: Respectful, professional, suitable for business or formal settings.
+  - Casual: Friendly, colloquial, suitable for friends and family.
+  - Literal: Word-for-word as much as possible, focusing on structural accuracy over natural flow.
+
+  INSTRUCTIONS:
+  1. Preserving Formatting: Keep all line breaks, lists, and special characters exactly as they are in the source.
+  2. Nuance: Capture the precise emotional and cultural context of the specified mode.
+  3. No Meta-talk: Return ONLY the translated text. Do not explain anything.
+  4. Language Detection: If source language is unknown, detect it automatically.
+  
+  SOURCE TEXT:
+  """
+  ${text}
+  """`;
+
   try {
     const response = await client.models.generateContent({
       model: "gemini-3-flash-preview",
-      contents: prompt,
+      contents: systemPrompt,
     });
-    return response.text || "No translation result.";
+    
+    return {
+      text: response.text || "No translation result.",
+      detectedLanguage: sourceLang === 'Auto' ? (targetLang === 'English' ? 'Portuguese' : 'English') : null // Mocking detection for now as Gemini doesn't always return metadata easily in simple generateContent
+    };
   } catch (error) {
     console.error("Translation error:", error);
     throw error;

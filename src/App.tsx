@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   MessageCircle, 
@@ -25,33 +25,44 @@ export default function App() {
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [defaultLanguage, setDefaultLanguage] = useState('Português (BR)');
 
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+    if (!isDarkMode) {
+      document.documentElement.classList.add('light');
+    } else {
+      document.documentElement.classList.remove('light');
+    }
+  }, [isDarkMode]);
+
   if (showPrivacy) {
     return (
-      <div className={`flex flex-col h-screen w-full items-center justify-center text-center p-6 ${isDarkMode ? 'bg-surface text-text-main' : 'bg-white text-indigo-950'}`}>
+      <div className={`flex flex-col min-h-screen w-full items-center justify-center p-6 bg-surface text-text-main overflow-y-auto`}>
         <motion.div 
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          className={`${isDarkMode ? 'bg-surface-card border-white/5' : 'bg-zinc-50 border-zinc-200'} border p-12 rounded-[3.5rem] shadow-2xl flex flex-col items-center max-w-sm relative overflow-hidden ai-glow`}
+          className={`bg-surface-card border-surface-border border p-6 sm:p-8 rounded-[2.5rem] shadow-2xl flex flex-col items-center w-[90%] max-w-[400px] relative overflow-hidden ai-glow mb-12`}
         >
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500/50 via-violet-500/50 to-indigo-500/50" />
           
-          <div className="w-24 h-24 bg-indigo-500/10 rounded-[2rem] flex items-center justify-center text-indigo-400 mb-10 shadow-inner border border-white/5 mesh-gradient">
+          <div className="w-20 h-20 bg-indigo-500/10 rounded-[1.5rem] flex items-center justify-center text-indigo-400 mb-8 shadow-inner border border-white/5 mesh-gradient shrink-0">
             <motion.div
               initial={{ rotate: -10, scale: 0.9 }}
               animate={{ rotate: 10, scale: 1.1 }}
               transition={{ repeat: Infinity, duration: 4, repeatType: 'reverse', ease: "easeInOut" }}
             >
-              <ShieldCheck className="w-12 h-12" />
+              <ShieldCheck className="w-10 h-10" />
             </motion.div>
           </div>
           
-          <h2 className="text-4xl font-black tracking-tighter mb-6 bg-gradient-to-br from-white to-white/50 bg-clip-text text-transparent">Privacidade Traduza.AI</h2>
+          <div className="flex flex-col items-center text-center flex-1 w-full">
+            <h2 className={`text-3xl sm:text-4xl font-black tracking-tighter mb-4 ${isDarkMode ? 'bg-gradient-to-br from-white to-white/50 bg-clip-text text-transparent' : 'text-text-main'}`}>Privacidade Traduza.AI</h2>
+            
+            <p className="text-text-muted text-sm leading-relaxed mb-8 px-2 font-medium">
+              O Traduza.AI requer acesso inteligente para processar e traduzir conteúdos em tempo real. Seus dados são protegidos e usados apenas para melhorar sua experiência.
+            </p>
+          </div>
           
-          <p className="text-text-muted text-sm leading-relaxed mb-12 px-2 font-medium">
-            O Traduza.AI requer acesso inteligente para processar e traduzir conteúdos em tempo real. Seus dados são protegidos e usados apenas para melhorar sua experiência.
-          </p>
-          
-          <div className="w-full space-y-4">
+          <div className="w-full space-y-3 sm:space-y-4">
             <button 
               onClick={() => setShowPrivacy(false)}
               className="w-full bg-white/5 border border-white/10 text-text-muted font-black uppercase text-[10px] tracking-widest py-4 rounded-2xl hover:bg-white/10 transition-all"
@@ -60,14 +71,14 @@ export default function App() {
             </button>
             <button 
               onClick={() => setShowPrivacy(false)}
-              className="w-full bg-indigo-600 text-white font-bold py-5 rounded-2xl shadow-[0_20px_50px_rgba(79,70,229,0.3)] active:scale-95 transition-all tracking-tight hover:bg-indigo-500"
+              className="w-full bg-indigo-600 text-white font-bold py-4 sm:py-5 rounded-2xl shadow-[0_20px_50px_rgba(79,70,229,0.3)] active:scale-95 transition-all tracking-tight hover:bg-indigo-500"
             >
               Aceitar e Começar
             </button>
           </div>
         </motion.div>
         
-        <footer className="mt-12 opacity-40">
+        <footer className="opacity-40 text-center pb-6">
            <p className="text-[10px] font-black uppercase tracking-[0.4em] mb-3 text-text-muted">© 2026 TRADUZA.AI</p>
            <div className="flex gap-6 justify-center text-[10px] font-black uppercase tracking-[0.2em] text-indigo-400/60">
               <button className="hover:text-indigo-400">Privacidade</button>
@@ -110,7 +121,7 @@ export default function App() {
   ];
 
   return (
-    <div className={`flex flex-col h-screen w-full max-w-4xl mx-auto relative overflow-hidden transition-all duration-700 bg-surface text-text-main shadow-2xl ${
+    <div className={`flex flex-col h-screen w-full max-w-4xl mx-auto relative overflow-hidden transition-all duration-700 bg-surface text-text-main shadow-2xl app-container ${
       !isDarkMode ? 'light shadow-indigo-100/50' : ''
     }`}>
       {/* Header */}
@@ -121,21 +132,17 @@ export default function App() {
           <div className="w-9 h-9 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-xl flex items-center justify-center shadow-[0_8px_20px_rgba(79,70,229,0.4)]">
             <Languages className="text-white w-5 h-5" />
           </div>
-          <h1 className={`text-2xl font-black tracking-tighter bg-gradient-to-br ${isDarkMode ? 'from-white to-white/40' : 'from-indigo-950 to-indigo-950/60'} bg-clip-text text-transparent`}>Traduza.AI</h1>
+          <h1 className={`text-2xl font-black tracking-tighter ${isDarkMode ? 'text-white' : 'text-text-main'}`}>Traduza.AI</h1>
         </div>
         <div className="flex items-center gap-3">
           <button 
             aria-label="Ativar Comando de Voz"
-            className={`w-10 h-10 rounded-xl border flex items-center justify-center transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 ${
-            isDarkMode ? 'bg-white/5 border-white/10 text-zinc-400 hover:text-white focus-visible:ring-offset-zinc-950 hover:bg-white/10' : 'bg-indigo-50 border-indigo-200 text-indigo-500 hover:text-indigo-700 focus-visible:ring-offset-white'
-          }`}>
+            className={`w-10 h-10 rounded-xl border flex items-center justify-center transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 bg-surface-card border-surface-border text-text-muted hover:text-text-main focus-visible:ring-offset-surface`}>
             <Mic className="w-4 h-4" />
           </button>
           <button 
             aria-label="Meu Perfil"
-            className={`w-10 h-10 rounded-full border flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 ${
-             isDarkMode ? 'bg-white/5 border-white/10 text-zinc-400 focus-visible:ring-offset-zinc-950 hover:bg-white/10' : 'bg-indigo-50 border-indigo-200 text-indigo-500 focus-visible:ring-offset-white'
-          }`}>
+            className={`w-10 h-10 rounded-full border flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 bg-surface-card border-surface-border text-text-muted hover:text-text-main focus-visible:ring-offset-surface`}>
             <User className="w-5 h-5" />
           </button>
         </div>
@@ -144,8 +151,8 @@ export default function App() {
       {/* Main Content */}
       <main 
         id="main-content"
-        className={`flex-1 overflow-y-auto relative scrollbar-hide mesh-gradient ${isDarkMode ? 'bg-surface/50' : 'bg-surface'}`}
-      >
+        className={`flex-1 overflow-y-auto relative scrollbar-hide mesh-gradient bg-surface/50`}
+    >
         <AnimatePresence mode="wait">
           <motion.div
             key={activeScreen}

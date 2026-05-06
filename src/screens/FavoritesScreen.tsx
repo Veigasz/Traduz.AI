@@ -48,7 +48,7 @@ export default function FavoritesScreen({ defaultLanguage, onSetDefaultLanguage,
   return (
     <div className="p-6 space-y-8 h-full">
       <header>
-        <h2 className={`text-3xl font-black tracking-tighter ${isDarkMode ? 'text-white' : 'text-indigo-950'}`}>Favoritos</h2>
+        <h2 className={`text-3xl font-black tracking-tighter text-text-main`}>Favoritos</h2>
         <p className="text-xs font-bold text-text-muted mt-2 uppercase tracking-[0.2em]">Idiomas & Traduções</p>
       </header>
 
@@ -63,16 +63,12 @@ export default function FavoritesScreen({ defaultLanguage, onSetDefaultLanguage,
         
         <div className="relative">
           <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-            <Search className={`w-5 h-5 ${isDarkMode ? 'text-zinc-500' : 'text-indigo-500'}`} />
+            <Search className={`w-5 h-5 text-primary opacity-50`} />
           </div>
           <input 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className={`w-full border rounded-2xl py-4 pl-12 pr-4 text-sm focus:ring-4 focus:ring-indigo-500/20 shadow-xl transition-all outline-none ${
-              isDarkMode 
-                ? 'bg-surface-card border-surface-border text-text-main placeholder-zinc-700' 
-                : 'bg-white border-indigo-100 text-indigo-950 placeholder-indigo-400'
-            }`}
+            className={`w-full border rounded-2xl py-4 pl-12 pr-4 text-sm focus:ring-4 focus:ring-primary/20 shadow-xl transition-all outline-none bg-surface-card border-surface-border text-text-main placeholder-text-muted/30`}
             placeholder="Pesquisar idioma..."
           />
         </div>
@@ -86,12 +82,10 @@ export default function FavoritesScreen({ defaultLanguage, onSetDefaultLanguage,
                 onClick={() => onSetDefaultLanguage(lang)}
                 aria-label={`Definir ${lang} como idioma padrão`}
                 aria-pressed={isDefault}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-bold transition-all shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 ${
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-bold transition-all shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${
                   isDefault 
-                    ? 'bg-indigo-600 border-indigo-500 text-white shadow-indigo-500/20' 
-                    : isDarkMode 
-                      ? 'bg-surface-card border-surface-border text-text-main hover:border-indigo-500/50 focus-visible:ring-offset-zinc-950' 
-                      : 'bg-indigo-50 border-indigo-100 text-indigo-700 hover:border-indigo-300 hover:bg-white focus-visible:ring-offset-white'
+                    ? 'bg-primary border-primary text-white shadow-primary/20' 
+                    : 'bg-surface-card border-surface-border text-text-main hover:border-primary/50 focus-visible:ring-offset-surface' 
                 }`}
               >
                 <LangIcon className="w-4 h-4 opacity-70" />
@@ -112,9 +106,7 @@ export default function FavoritesScreen({ defaultLanguage, onSetDefaultLanguage,
         
         <div className="space-y-4">
           {favorites.length === 0 ? (
-            <div className={`p-10 text-center border-2 border-dashed rounded-[2.5rem] ${
-              isDarkMode ? 'border-zinc-800 text-zinc-600' : 'border-indigo-100 text-indigo-400'
-            }`}>
+            <div className={`p-10 text-center border-2 border-dashed rounded-[2.5rem] border-surface-border text-text-muted opacity-50`}>
               <Heart className="w-8 h-8 mx-auto mb-2 opacity-50" />
               <p className="text-xs font-bold uppercase tracking-widest">Nenhuma tradução salva</p>
             </div>
@@ -127,11 +119,7 @@ export default function FavoritesScreen({ defaultLanguage, onSetDefaultLanguage,
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.9 }}
-                  className={`border p-6 rounded-3xl shadow-xl transition-all group relative overflow-hidden ${
-                    isDarkMode 
-                      ? 'bg-surface-card border-surface-border hover:border-indigo-500/30' 
-                      : 'bg-white border-indigo-100 hover:border-indigo-300 shadow-indigo-200/20'
-                  }`}
+                  className={`border p-6 rounded-3xl shadow-xl transition-all group relative overflow-hidden bg-surface-card border-surface-border hover:border-indigo-500/30`}
                 >
                   <div className="absolute top-0 left-0 w-1.5 h-full bg-indigo-500/20 group-hover:bg-indigo-500 transition-all" />
                   <div className="flex justify-between items-start mb-4">
@@ -144,8 +132,8 @@ export default function FavoritesScreen({ defaultLanguage, onSetDefaultLanguage,
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
-                  <h4 className={`text-xl font-bold tracking-tight leading-tight mb-3 ${isDarkMode ? 'text-text-main' : 'text-indigo-950'}`}>{item.original}</h4>
-                  <p className={`text-sm font-medium ${isDarkMode ? 'text-text-muted' : 'text-indigo-700/70'}`}>{item.translated}</p>
+                  <h4 className={`text-xl font-bold tracking-tight leading-tight mb-3 text-text-main`}>{item.original}</h4>
+                  <p className={`text-sm font-medium text-text-muted`}>{item.translated}</p>
                 </motion.div>
               ))}
             </AnimatePresence>

@@ -35,20 +35,18 @@ export default function SettingsScreen({ isDarkMode, setIsDarkMode, defaultLangu
       <div className="px-6 py-10 space-y-8 max-w-md mx-auto">
         
         {/* User Profile Section */}
-        <section className={`p-6 rounded-[2.5rem] border transition-all flex items-center gap-5 ai-glow ${
-          isDarkMode ? 'bg-surface-card border-white/5' : 'bg-surface-card border-slate-200'
-        }`}>
+        <section className={`p-6 rounded-[2.5rem] border transition-all flex items-center gap-5 ai-glow bg-surface-card border-surface-border`}>
           <div className="relative">
-            <div className={`w-16 h-16 rounded-[1.5rem] flex items-center justify-center border-2 border-indigo-500/30 ${isDarkMode ? 'bg-white/5' : 'bg-indigo-50'}`}>
-              <User className="w-8 h-8 text-indigo-500" />
+            <div className={`w-16 h-16 rounded-[1.5rem] flex items-center justify-center border-2 border-primary/30 ${isDarkMode ? 'bg-white/5' : 'bg-primary/5'}`}>
+              <User className="w-8 h-8 text-primary" />
             </div>
             <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 border-2 border-surface rounded-full" />
           </div>
           <div className="flex-1">
             <h2 className="text-xl font-black tracking-tight">Gustavo Lima</h2>
-            <p className="text-[10px] font-black uppercase tracking-widest text-indigo-500">Membro Premium</p>
+            <p className="text-[10px] font-black uppercase tracking-widest text-primary">Membro Premium</p>
           </div>
-          <button className={`p-2 rounded-xl transition-colors ${isDarkMode ? 'hover:bg-white/5 text-zinc-500' : 'hover:bg-slate-100 text-slate-400'}`}>
+          <button className={`p-2 rounded-xl transition-colors hover:bg-surface text-text-muted`}>
             <ChevronDown className="w-5 h-5" />
           </button>
         </section>
@@ -56,14 +54,14 @@ export default function SettingsScreen({ isDarkMode, setIsDarkMode, defaultLangu
         {/* Appearance Settings */}
         <div className="space-y-4">
           <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-text-muted ml-4">Preferências de Interface</h3>
-          <div className={`p-4 rounded-[2.5rem] border ${isDarkMode ? 'bg-surface-card border-white/5' : 'bg-white border-slate-200 shadow-sm'}`}>
-            <div className={`flex p-1 rounded-2xl ${isDarkMode ? 'bg-white/5' : 'bg-slate-100'}`}>
+          <div className={`p-4 rounded-[2.5rem] border bg-surface-card border-surface-border shadow-sm`}>
+            <div className={`flex p-1 rounded-2xl bg-surface/50`}>
               <button 
                 onClick={() => setIsDarkMode(false)}
                 className={`flex-1 flex items-center justify-center gap-3 py-3 rounded-xl font-bold text-sm transition-all ${
                   !isDarkMode 
-                    ? 'bg-white text-indigo-600 shadow-md scale-[1.02]' 
-                    : 'text-zinc-500 hover:text-white hover:bg-white/5'
+                    ? 'bg-surface text-primary shadow-md scale-[1.02]' 
+                    : 'text-text-muted hover:text-text-main hover:bg-white/5'
                 }`}
               >
                 <Sun className={`w-4 h-4 ${!isDarkMode ? 'text-orange-500' : ''}`} />
@@ -73,11 +71,11 @@ export default function SettingsScreen({ isDarkMode, setIsDarkMode, defaultLangu
                 onClick={() => setIsDarkMode(true)}
                 className={`flex-1 flex items-center justify-center gap-3 py-3 rounded-xl font-bold text-sm transition-all ${
                   isDarkMode 
-                    ? 'bg-indigo-600 text-white shadow-lg scale-[1.02]' 
-                    : 'text-slate-500 hover:text-indigo-600 hover:bg-white'
+                    ? 'bg-primary text-white shadow-lg scale-[1.02]' 
+                    : 'text-text-muted hover:text-primary hover:bg-surface'
                 }`}
               >
-                <Moon className={`w-4 h-4 ${isDarkMode ? 'text-indigo-200' : ''}`} />
+                <Moon className={`w-4 h-4 ${isDarkMode ? 'text-primary/40' : ''}`} />
                 Modo Dark
               </button>
             </div>
@@ -87,13 +85,13 @@ export default function SettingsScreen({ isDarkMode, setIsDarkMode, defaultLangu
         {/* Other System Settings */}
         <div className="space-y-4">
           <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-text-muted ml-4">Personalização de Sistema</h3>
-          <div className={`rounded-[2.5rem] border overflow-hidden ${isDarkMode ? 'bg-surface-card border-white/5' : 'bg-white border-slate-200'}`}>
+          <div className={`rounded-[2.5rem] border overflow-hidden bg-surface-card border-surface-border`}>
             <button 
-              className={`w-full p-6 transition-all flex items-center justify-between group border-b ${isDarkMode ? 'border-white/5 hover:bg-white/[0.02]' : 'border-slate-100 hover:bg-slate-50'}`}
+              className={`w-full p-6 transition-all flex items-center justify-between group border-b border-surface-border hover:bg-surface`}
               onClick={() => setNotifications(!notifications)}
             >
               <div className="flex items-center gap-4">
-                <div className={`p-3 rounded-2xl ${isDarkMode ? 'bg-violet-500/10 text-violet-400' : 'bg-violet-50 text-violet-600'}`}>
+                <div className={`p-3 rounded-2xl bg-primary/10 text-primary`}>
                   <Bell className="w-5 h-5" />
                 </div>
                 <div className="text-left">
@@ -101,7 +99,7 @@ export default function SettingsScreen({ isDarkMode, setIsDarkMode, defaultLangu
                   <p className="text-[10px] text-text-muted font-medium uppercase tracking-widest">Alertas e Dicas de IA</p>
                 </div>
               </div>
-              {notifications ? <ToggleRight className="w-8 h-8 text-indigo-500" /> : <ToggleLeft className="w-8 h-8 text-slate-400" />}
+              {notifications ? <ToggleRight className="w-8 h-8 text-primary" /> : <ToggleLeft className="w-8 h-8 text-text-muted" />}
             </button>
           </div>
         </div>
@@ -109,11 +107,11 @@ export default function SettingsScreen({ isDarkMode, setIsDarkMode, defaultLangu
         {/* Translation Engine Settings */}
         <div className="space-y-4">
           <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-text-muted ml-4">Motor de Tradução</h3>
-          <div className={`rounded-[2.5rem] border overflow-hidden ${isDarkMode ? 'bg-surface-card border-white/5' : 'bg-white border-slate-200'}`}>
-            <div className={`p-6 border-b ${isDarkMode ? 'border-white/5' : 'border-slate-100'}`}>
+          <div className={`rounded-[2.5rem] border overflow-hidden bg-surface-card border-surface-border`}>
+            <div className={`p-6 border-b border-surface-border`}>
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-4">
-                  <div className={`p-3 rounded-2xl ${isDarkMode ? 'bg-orange-500/10 text-orange-400' : 'bg-orange-50 text-orange-600'}`}>
+                  <div className={`p-3 rounded-2xl bg-primary/10 text-primary`}>
                     <Volume2 className="w-5 h-5" />
                   </div>
                   <div className="text-left">
@@ -129,16 +127,16 @@ export default function SettingsScreen({ isDarkMode, setIsDarkMode, defaultLangu
                 step="0.1" 
                 value={voiceSpeed}
                 onChange={(e) => setVoiceSpeed(parseFloat(e.target.value))}
-                className="w-full h-1.5 bg-indigo-500/20 rounded-full appearance-none cursor-pointer accent-indigo-500"
+                className="w-full h-1.5 bg-primary/20 rounded-full appearance-none cursor-pointer accent-primary"
               />
             </div>
 
             <button 
-              className={`w-full p-6 transition-all flex items-center justify-between group ${isDarkMode ? 'hover:bg-white/[0.02]' : 'hover:bg-slate-50'}`}
+              className={`w-full p-6 transition-all flex items-center justify-between group hover:bg-surface`}
               onClick={() => setAutoTranslate(!autoTranslate)}
             >
               <div className="flex items-center gap-4">
-                <div className={`p-3 rounded-2xl ${isDarkMode ? 'bg-cyan-500/10 text-cyan-400' : 'bg-cyan-50 text-cyan-600'}`}>
+                <div className={`p-3 rounded-2xl bg-primary/10 text-primary`}>
                   <Zap className="w-5 h-5" />
                 </div>
                 <div className="text-left">
@@ -146,7 +144,7 @@ export default function SettingsScreen({ isDarkMode, setIsDarkMode, defaultLangu
                   <p className="text-[10px] text-text-muted font-medium uppercase tracking-widest">Processamento Instantâneo</p>
                 </div>
               </div>
-              {autoTranslate ? <ToggleRight className="w-8 h-8 text-indigo-500" /> : <ToggleLeft className="w-8 h-8 text-slate-400" />}
+              {autoTranslate ? <ToggleRight className="w-8 h-8 text-primary" /> : <ToggleLeft className="w-8 h-8 text-text-muted" />}
             </button>
           </div>
         </div>
@@ -155,11 +153,20 @@ export default function SettingsScreen({ isDarkMode, setIsDarkMode, defaultLangu
         <div className="space-y-4">
           <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-text-muted ml-4">Dados e Segurança</h3>
           <div className="grid grid-cols-1 gap-3">
-             <button className={`w-full p-5 rounded-3xl border flex items-center justify-between transition-all group ${
-               isDarkMode ? 'bg-surface-card border-white/5 hover:bg-white/[0.02]' : 'bg-white border-slate-200 hover:bg-slate-50'
-             }`}>
+             <button 
+                onClick={() => {
+                  if (window.confirm('Tem certeza que deseja apagar todo o histórico de conversas e traduções? Esta ação não pode ser desfeita.')) {
+                    localStorage.removeItem('chat_sessions_records');
+                    localStorage.removeItem('translation_history');
+                    // We could also clear favorites if requested, but "history" usually refers to recent items
+                    alert('Histórico removido com sucesso!');
+                    window.location.reload(); // Simple way to refresh states across all screens
+                  }
+                }}
+                className={`w-full p-5 rounded-3xl border flex items-center justify-between transition-all group bg-surface-card border-surface-border hover:bg-surface`}
+             >
                 <div className="flex items-center gap-4">
-                  <div className={`p-2.5 rounded-xl ${isDarkMode ? 'bg-zinc-800 text-zinc-400' : 'bg-slate-100 text-slate-500'}`}>
+                  <div className={`p-2.5 rounded-xl bg-surface border border-surface-border text-text-muted transition-colors group-hover:text-red-500`}>
                     <Clock className="w-4 h-4" />
                   </div>
                   <span className="text-sm font-bold tracking-tight">Limpar Histórico</span>
@@ -167,11 +174,9 @@ export default function SettingsScreen({ isDarkMode, setIsDarkMode, defaultLangu
                 <ChevronRight className="w-4 h-4 text-text-muted opacity-0 group-hover:opacity-100 transition-all translate-x-[-10px] group-hover:translate-x-0" />
              </button>
 
-             <button className={`w-full p-5 rounded-3xl border flex items-center justify-between transition-all group ${
-               isDarkMode ? 'bg-surface-card border-white/5 hover:bg-white/[0.02]' : 'bg-white border-slate-200 hover:bg-slate-50'
-             }`}>
+             <button className={`w-full p-5 rounded-3xl border flex items-center justify-between transition-all group bg-surface-card border-surface-border hover:bg-surface`}>
                 <div className="flex items-center gap-4">
-                  <div className={`p-2.5 rounded-xl ${isDarkMode ? 'bg-zinc-800 text-zinc-400' : 'bg-slate-100 text-slate-500'}`}>
+                  <div className={`p-2.5 rounded-xl bg-surface border border-surface-border text-text-muted`}>
                     <HelpCircle className="w-4 h-4" />
                   </div>
                   <span className="text-sm font-bold tracking-tight">Suporte e Ajuda</span>
@@ -179,11 +184,9 @@ export default function SettingsScreen({ isDarkMode, setIsDarkMode, defaultLangu
                 <ChevronRight className="w-4 h-4 text-text-muted opacity-0 group-hover:opacity-100 transition-all translate-x-[-10px] group-hover:translate-x-0" />
              </button>
 
-             <button className={`w-full p-5 rounded-3xl border flex items-center justify-between transition-all group ${
-               isDarkMode ? 'bg-surface-card border-white/5 hover:bg-red-500/5' : 'bg-white border-slate-200 hover:bg-red-50'
-             }`}>
+             <button className={`w-full p-5 rounded-3xl border flex items-center justify-between transition-all group bg-surface-card border-surface-border hover:bg-red-500/5`}>
                 <div className="flex items-center gap-4 text-red-500">
-                  <div className={`p-2.5 rounded-xl ${isDarkMode ? 'bg-red-500/10' : 'bg-red-100'}`}>
+                  <div className={`p-2.5 rounded-xl bg-red-500/10`}>
                     <LogOut className="w-4 h-4" />
                   </div>
                   <span className="text-sm font-bold tracking-tight">Sair da Conta</span>

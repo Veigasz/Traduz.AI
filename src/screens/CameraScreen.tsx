@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { Zap, RefreshCcw, Upload, Loader2, X } from 'lucide-react';
+import { Zap, RefreshCcw, Upload, Loader2, X, Plus, Minus } from 'lucide-react';
 import { translateImage } from '../services/geminiService';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -14,7 +14,12 @@ export default function CameraScreen({ isDarkMode }: CameraScreenProps) {
   const [error, setError] = useState<string | null>(null);
   const [isTranslating, setIsTranslating] = useState(false);
   const [result, setResult] = useState<string | null>(null);
-  const [flash, setFlash] = useState(false);
+  const [flashOn, setFlashOn] = useState(false);
+  const [zoom, setZoom] = useState(1);
+  const [maxZoom, setMaxZoom] = useState(1);
+  const [minZoom, setMinZoom] = useState(1);
+  const [hasTorch, setHasTorch] = useState(false);
+  const [hasZoom, setHasZoom] = useState(false);
 
   useEffect(() => {
     startCamera();
@@ -27,14 +32,47 @@ export default function CameraScreen({ isDarkMode }: CameraScreenProps) {
         video: { facingMode: 'environment' },
         audio: false 
       });
+      
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
         setIsStreaming(true);
         setError(null);
+
+        const track = stream.getVideoTracks()[0];
+        const capabilities = track.getCapabilities() as any;
+
+        if (capabilities.torch) setHasTorch(true);
+        if (capabilities.zoom) {
+          setHasZoom(true);
+          setMinZoom(capabilities.zoom.min || 1);
+          setMaxZoom(capabilities.zoom.max || 1);
+          setZoom(capabilities.zoom.min || 1);
+        }
       }
     } catch (err) {
       console.error("Camera access error:", err);
       setError("Não foi possível acessar a câmera. Verifique as permissões.");
+    }
+  };
+
+  useEffect(() => {
+    applyConstraints();
+  }, [zoom, flashOn]);
+
+  const applyConstraints = async () => {
+    if (videoRef.current && videoRef.current.srcObject) {
+      const track = (videoRef.current.srcObject as MediaStream).getVideoTracks()[0];
+      try {
+        const constraints: any = {};
+        if (hasZoom) constraints.zoom = zoom;
+        if (hasTorch) constraints.torch = flashOn;
+        
+        if (Object.keys(constraints).length > 0) {
+          await track.applyConstraints({ advanced: [constraints] } as any);
+        }
+      } catch (e) {
+        console.error("Error applying constraints:", e);
+      }
     }
   };
 
@@ -48,8 +86,6 @@ export default function CameraScreen({ isDarkMode }: CameraScreenProps) {
   const captureFrame = async () => {
     if (!videoRef.current || !canvasRef.current || isTranslating) return;
 
-    setFlash(true);
-    setTimeout(() => setFlash(false), 50); // Pico muito curto
     setIsTranslating(true);
 
     const canvas = canvasRef.current;
@@ -75,45 +111,46 @@ export default function CameraScreen({ isDarkMode }: CameraScreenProps) {
   };
 
   return (
-    <div className={`flex flex-col items-center px-6 h-full flex-1 transition-colors relative overflow-hidden ${
-      isDarkMode ? 'bg-zinc-950' : 'bg-indigo-50/20'
-    }`}>
+    <div className={`flex flex-col items-center px-6 h-full flex-1 transition-colors relative overflow-hidden bg-surface`}>
       {/* Instructional Header */}
       <div className="w-full max-w-md mb-8 text-center mt-6 z-10">
-        <p className={`text-2xl font-bold tracking-tighter mb-2 ${isDarkMode ? 'text-white' : 'text-indigo-950'}`}>Câmera em tempo real</p>
-        <p className={`text-xs px-4 uppercase tracking-[0.2em] font-bold ${
-          isDarkMode ? 'text-zinc-500' : 'text-indigo-500'
-        }`}>
+        <p className={`text-2xl font-bold tracking-tighter mb-2 text-text-main`}>Câmera em tempo real</p>
+        <p className={`text-xs px-4 uppercase tracking-[0.2em] font-bold text-primary`}>
           Visão Inteligente Traduza.AI
         </p>
       </div>
 
-      <div className={`relative w-full aspect-[3/4] max-w-md rounded-[2.5rem] overflow-hidden shadow-2xl group border ${
-        isDarkMode ? 'bg-zinc-900 border-zinc-800' : 'bg-white border-indigo-100'
-      }`}>
-        {/* Real Camera Feed */}
+      <div className={`relative w-full aspect-square max-w-md rounded-[2.5rem] overflow-hidden shadow-2xl group border bg-surface-card border-surface-border`}>
         <video 
           ref={videoRef}
           autoPlay 
           playsInline
-          className={`w-full h-full object-cover transition-opacity ${
-            isDarkMode ? 'grayscale' : 'grayscale-0'
-          } ${isStreaming ? 'opacity-100' : 'opacity-0'}`}
+          className={`w-full h-full object-cover transition-opacity ${isStreaming ? 'opacity-100' : 'opacity-0'}`}
         />
 
-        {/* Improved Flash Effect Overlay */}
-        <AnimatePresence>
-          {flash && (
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.1 }}
-              className="absolute inset-0 bg-white z-[60] pointer-events-none"
-            />
-          )}
-        </AnimatePresence>
-        
+        {/* Zoom Control Overlay */}
+        {hasZoom && isStreaming && (
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-col items-center gap-4 bg-black/30 backdrop-blur-md p-3 rounded-full z-30">
+            <button onClick={() => setZoom(prev => Math.min(maxZoom, prev + 0.1))} className="text-white p-1 hover:bg-white/20 rounded-full transition-colors">
+              <Plus className="w-4 h-4" />
+            </button>
+            <div className="h-32 w-1 relative group">
+              <input 
+                type="range"
+                min={minZoom}
+                max={maxZoom}
+                step={0.1}
+                value={zoom}
+                onChange={(e) => setZoom(parseFloat(e.target.value))}
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-4 w-32 -rotate-90 appearance-none bg-indigo-500/30 rounded-full accent-indigo-500 cursor-pointer"
+              />
+            </div>
+            <button onClick={() => setZoom(prev => Math.max(minZoom, prev - 0.1))} className="text-white p-1 hover:bg-white/20 rounded-full transition-colors">
+              <Minus className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+
         {!isStreaming && !error && (
           <div className="absolute inset-0 flex items-center justify-center">
             <Loader2 className="w-8 h-8 text-indigo-500 animate-spin" />
@@ -141,7 +178,7 @@ export default function CameraScreen({ isDarkMode }: CameraScreenProps) {
             <motion.div 
               animate={{ top: ['0%', '100%', '0%'] }}
               transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-              className="absolute left-0 w-full h-0.5 bg-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.5)] z-20"
+              className="absolute left-0 w-full h-0.5 bg-primary shadow-lg z-20"
             />
           </div>
         )}
@@ -153,13 +190,11 @@ export default function CameraScreen({ isDarkMode }: CameraScreenProps) {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className={`absolute inset-x-6 bottom-6 p-6 rounded-3xl backdrop-blur-2xl border shadow-2xl z-50 ${
-                isDarkMode ? 'bg-zinc-900/90 border-zinc-700 text-white' : 'bg-white/90 border-indigo-100 text-indigo-950'
-              }`}
+              className={`absolute inset-x-6 bottom-6 p-6 rounded-3xl backdrop-blur-2xl border shadow-2xl z-50 bg-surface-card/90 border-surface-border text-text-main`}
             >
               <div className="flex justify-between items-start mb-2">
-                <span className="text-[10px] font-black uppercase tracking-widest text-indigo-600">Tradução Detectada</span>
-                <button onClick={() => setResult(null)} className="p-1 hover:bg-black/5 rounded-full">
+                <span className="text-[10px] font-black uppercase tracking-widest text-primary">Tradução Detectada</span>
+                <button onClick={() => setResult(null)} className="p-1 hover:bg-surface rounded-full transition-colors">
                   <X className="w-4 h-4" />
                 </button>
               </div>
@@ -170,14 +205,18 @@ export default function CameraScreen({ isDarkMode }: CameraScreenProps) {
       </div>
 
       {/* Controls */}
-      <div className="mt-10 w-full max-w-md flex flex-col items-center gap-8 pb-10 z-10">
+      <div className="flex-1 w-full max-w-md flex flex-col items-center justify-center gap-8 pb-12 z-10">
         <div className="flex items-center justify-center gap-10">
           <button 
-            aria-label="Ativar Flash da Câmera"
+            onClick={() => setFlashOn(!flashOn)}
+            aria-label="Alternar Lanterna"
             className={`w-12 h-12 rounded-2xl border flex items-center justify-center transition-all shadow-lg active:scale-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
-            isDarkMode ? 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:bg-zinc-800 hover:text-white' : 'bg-white border-indigo-100 text-indigo-400 hover:bg-indigo-50'
-          }`}>
-            <Zap className="w-5 h-5" />
+              flashOn 
+                ? 'bg-indigo-600 border-indigo-500 text-white shadow-indigo-500/20' 
+                : 'bg-surface-card border-surface-border text-text-muted hover:text-text-main'
+            }`}
+          >
+            <Zap className={`w-5 h-5 ${flashOn ? 'fill-current' : ''}`} />
           </button>
           
           <button 
@@ -185,14 +224,12 @@ export default function CameraScreen({ isDarkMode }: CameraScreenProps) {
             disabled={!isStreaming || isTranslating}
             aria-label="Capturar e Traduzir"
             className={`w-24 h-24 rounded-full p-2 shadow-2xl active:scale-95 transition-all border group relative focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 focus-visible:ring-offset-4 ${
-              isDarkMode ? 'bg-zinc-900 border-zinc-800 focus-visible:ring-offset-zinc-950' : 'bg-white border-indigo-100 focus-visible:ring-offset-white'
+              isDarkMode ? 'bg-surface-card border-surface-border focus-visible:ring-offset-zinc-950' : 'bg-white border-surface-border focus-visible:ring-offset-white shadow-indigo-500/5'
             } ${isTranslating ? 'opacity-50' : ''}`}
           >
-            <div className={`w-full h-full rounded-full border-4 flex items-center justify-center transition-colors ${
-              isDarkMode ? 'border-zinc-800 group-hover:border-indigo-500/50' : 'border-indigo-50 group-hover:border-indigo-200'
-            }`}>
-              <div className={`w-16 h-16 rounded-full bg-indigo-600 shadow-xl shadow-indigo-500/30 group-active:scale-90 transition-transform flex items-center justify-center`}>
-                {isTranslating && <Loader2 className="w-8 h-8 text-white animate-spin" />}
+            <div className={`w-full h-full rounded-full border-4 flex items-center justify-center transition-colors border-surface`}>
+              <div className={`w-16 h-16 rounded-full bg-primary shadow-xl shadow-primary/30 group-active:scale-90 transition-transform flex items-center justify-center`}>
+                {isTranslating ? <Loader2 className="w-8 h-8 text-white animate-spin" /> : <div className="w-6 h-6 rounded-full border-4 border-white/30" />}
               </div>
             </div>
           </button>
@@ -203,9 +240,7 @@ export default function CameraScreen({ isDarkMode }: CameraScreenProps) {
               startCamera();
             }}
             aria-label="Reiniciar Câmera"
-            className={`w-12 h-12 rounded-2xl border flex items-center justify-center transition-all shadow-lg active:scale-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
-              isDarkMode ? 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:bg-zinc-800 hover:text-white' : 'bg-white border-indigo-100 text-indigo-400 hover:bg-indigo-50'
-            }`}
+            className={`w-12 h-12 rounded-2xl border flex items-center justify-center transition-all shadow-lg active:scale-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 bg-surface-card border-surface-border text-text-muted hover:text-text-main`}
           >
             <RefreshCcw className="w-5 h-5" />
           </button>
@@ -213,11 +248,7 @@ export default function CameraScreen({ isDarkMode }: CameraScreenProps) {
 
         <button 
           aria-label="Carregar foto da galeria"
-          className={`flex items-center justify-center gap-3 py-5 px-12 rounded-2xl font-bold uppercase text-[10px] tracking-[0.3em] transition-all active:scale-95 shadow-xl group border focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
-           isDarkMode 
-            ? 'bg-zinc-900 border-zinc-800 text-zinc-100 hover:bg-zinc-800' 
-            : 'bg-white border-indigo-100 text-indigo-900 hover:bg-indigo-50 shadow-indigo-200/50'
-        }`}>
+          className={`flex items-center justify-center gap-3 py-5 px-12 rounded-2xl font-bold uppercase text-[10px] tracking-[0.3em] transition-all active:scale-95 shadow-xl group border focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 bg-surface-card border-surface-border text-text-main hover:bg-surface shadow-indigo-500/5`}>
           <Upload className="w-4 h-4 text-indigo-500 group-hover:scale-110 transition-transform" />
           Inserir Foto
         </button>

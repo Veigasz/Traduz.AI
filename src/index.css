@@ -21,11 +21,11 @@
 }
 
 .light {
-  --surface: #ffffff; /* Clean white base */
-  --surface-card: #f8fafc; /* Very subtle slate-50 card */
-  --surface-border: #f1f5f9; /* Slate-100 for very soft dividers */
-  --text-main: #0f172a; /* Slate-900 for high readability */
-  --text-muted: #64748b; /* Slate-500 for secondary info */
+  --surface: #ffffff; /* Total white */
+  --surface-card: #f8faff; /* Very subtle blue tint */
+  --surface-border: #e2e8f0; /* Clearer borders (slate-200) */
+  --text-main: #020617; /* Navy black (slate-950) for maximum contrast */
+  --text-muted: #334155; /* Slate-700 for readable secondary info */
 }
 
 @layer base {
@@ -39,8 +39,8 @@
 
 .light body {
   background-image: 
-    radial-gradient(at 50% 0%, rgba(99, 102, 241, 0.03) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.03) 0px, transparent 50%);
+    radial-gradient(at 50% 0%, rgba(99, 102, 241, 0.1) 0px, transparent 70%),
+    radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.05) 0px, transparent 50%);
 }
 
 .glass {
@@ -48,7 +48,7 @@
 }
 
 .light .glass {
-  @apply bg-white/70 border-zinc-200/50;
+  @apply bg-white/80 border-indigo-100;
 }
 
 .ai-glow {
@@ -61,6 +61,6 @@
 }
 
 .markdown-body {
-  @apply text-sm leading-relaxed text-zinc-300;
+  @apply text-sm leading-relaxed text-text-main opacity-90;
 }
 

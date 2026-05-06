@@ -31,12 +31,12 @@ export default function SettingsScreen({ isDarkMode, setIsDarkMode, defaultLangu
   const [notifications, setNotifications] = useState(true);
 
   return (
-    <div className={`min-h-screen pb-20 transition-colors ${isDarkMode ? 'bg-surface' : 'bg-slate-50'}`}>
+    <div className={`min-h-screen pb-20 transition-colors ${isDarkMode ? 'bg-surface' : 'bg-surface'}`}>
       <div className="px-6 py-10 space-y-8 max-w-md mx-auto">
         
         {/* User Profile Section */}
         <section className={`p-6 rounded-[2.5rem] border transition-all flex items-center gap-5 ai-glow ${
-          isDarkMode ? 'bg-surface-card border-white/5' : 'bg-white border-slate-200'
+          isDarkMode ? 'bg-surface-card border-white/5' : 'bg-surface-card border-slate-200'
         }`}>
           <div className="relative">
             <div className={`w-16 h-16 rounded-[1.5rem] flex items-center justify-center border-2 border-indigo-500/30 ${isDarkMode ? 'bg-white/5' : 'bg-indigo-50'}`}>
@@ -74,7 +74,7 @@ export default function SettingsScreen({ isDarkMode, setIsDarkMode, defaultLangu
                 className={`flex-1 flex items-center justify-center gap-3 py-3 rounded-xl font-bold text-sm transition-all ${
                   isDarkMode 
                     ? 'bg-indigo-600 text-white shadow-lg scale-[1.02]' 
-                    : 'text-slate-400 hover:text-indigo-600 hover:bg-white'
+                    : 'text-slate-500 hover:text-indigo-600 hover:bg-white'
                 }`}
               >
                 <Moon className={`w-4 h-4 ${isDarkMode ? 'text-indigo-200' : ''}`} />
@@ -101,7 +101,7 @@ export default function SettingsScreen({ isDarkMode, setIsDarkMode, defaultLangu
                   <p className="text-[10px] text-text-muted font-medium uppercase tracking-widest">Alertas e Dicas de IA</p>
                 </div>
               </div>
-              {notifications ? <ToggleRight className="w-8 h-8 text-indigo-500" /> : <ToggleLeft className="w-8 h-8 text-slate-300" />}
+              {notifications ? <ToggleRight className="w-8 h-8 text-indigo-500" /> : <ToggleLeft className="w-8 h-8 text-slate-400" />}
             </button>
           </div>
         </div>
@@ -146,7 +146,7 @@ export default function SettingsScreen({ isDarkMode, setIsDarkMode, defaultLangu
                   <p className="text-[10px] text-text-muted font-medium uppercase tracking-widest">Processamento Instantâneo</p>
                 </div>
               </div>
-              {autoTranslate ? <ToggleRight className="w-8 h-8 text-indigo-500" /> : <ToggleLeft className="w-8 h-8 text-slate-300" />}
+              {autoTranslate ? <ToggleRight className="w-8 h-8 text-indigo-500" /> : <ToggleLeft className="w-8 h-8 text-slate-400" />}
             </button>
           </div>
         </div>

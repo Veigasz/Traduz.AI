@@ -376,7 +376,7 @@ export default function TranslateScreen({ defaultLanguage, isDarkMode }: Transla
       {/* Language Selector */}
       <section className="flex flex-col gap-4">
         <div className="flex items-center justify-between px-2">
-          <h2 className={`text-xs font-black uppercase tracking-widest ${isDarkMode ? 'text-zinc-500' : 'text-indigo-300'}`}>
+          <h2 className={`text-xs font-black uppercase tracking-widest ${isDarkMode ? 'text-zinc-500' : 'text-indigo-500'}`}>
             {isLearningMode ? 'Modo de Aprendizado' : 'Modo Tradução'}
           </h2>
           <button 
@@ -390,7 +390,7 @@ export default function TranslateScreen({ defaultLanguage, isDarkMode }: Transla
             className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-tighter transition-all shadow-sm flex items-center gap-2 ${
               isLearningMode 
                 ? 'bg-indigo-600 text-white shadow-indigo-600/20' 
-                : isDarkMode ? 'bg-zinc-800 text-zinc-400 hover:text-white' : 'bg-indigo-50 text-indigo-400 hover:bg-indigo-100'
+                : isDarkMode ? 'bg-zinc-800 text-zinc-400 hover:text-white' : 'bg-indigo-100 text-indigo-600 hover:bg-indigo-200'
             }`}
           >
             <div className={`w-1.5 h-1.5 rounded-full ${isLearningMode ? 'bg-white animate-pulse' : 'bg-current'}`} />
@@ -416,10 +416,10 @@ export default function TranslateScreen({ defaultLanguage, isDarkMode }: Transla
           onClick={swapLanguages}
           aria-label="Inverter Idiomas"
           className={`mx-3 p-2 transition-colors rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
-            isDarkMode ? 'text-text-muted hover:text-indigo-400 hover:bg-white/5' : 'text-indigo-300 hover:text-indigo-600 hover:bg-indigo-50'
+            isDarkMode ? 'text-text-muted hover:text-indigo-400 hover:bg-white/5' : 'text-indigo-400 hover:text-indigo-700 hover:bg-indigo-100'
           }`}
         >
-          <ArrowLeftRight className="w-5 h-5 opacity-50" />
+          <ArrowLeftRight className="w-5 h-5 opacity-70" />
         </button>
         <button 
           onClick={() => setPickingLang('target')}
@@ -450,7 +450,7 @@ export default function TranslateScreen({ defaultLanguage, isDarkMode }: Transla
                 className={`w-full min-h-[220px] p-8 text-xl border focus:ring-4 focus:ring-indigo-500/20 resize-none rounded-[2.5rem] shadow-2xl transition-all outline-none ${
                   isDarkMode 
                     ? 'bg-surface-card border-white/5 text-text-main placeholder-zinc-800' 
-                    : 'bg-white border-indigo-100 text-indigo-950 placeholder-indigo-200'
+                    : 'bg-white border-indigo-100 text-indigo-950 placeholder-slate-400'
                 }`}
                 placeholder="Introduza o texto a processar..."
               />
@@ -505,8 +505,8 @@ export default function TranslateScreen({ defaultLanguage, isDarkMode }: Transla
                   className="flex flex-wrap gap-2 px-2"
                 >
                   <div className="flex items-center gap-1.5 mr-2 pt-1">
-                    <Search className={`w-3.5 h-3.5 ${isDarkMode ? 'text-zinc-600' : 'text-indigo-300'}`} />
-                    <span className={`text-[9px] font-black uppercase tracking-[0.2em] ${isDarkMode ? 'text-zinc-700' : 'text-indigo-200'}`}>Synapse</span>
+                    <Search className={`w-3.5 h-3.5 ${isDarkMode ? 'text-zinc-600' : 'text-indigo-500'}`} />
+                    <span className={`text-[9px] font-black uppercase tracking-[0.2em] ${isDarkMode ? 'text-zinc-700' : 'text-indigo-400'}`}>Synapse</span>
                   </div>
                   {suggestions.map((sug, i) => (
                     <button
@@ -515,7 +515,7 @@ export default function TranslateScreen({ defaultLanguage, isDarkMode }: Transla
                       className={`text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-full border transition-all active:scale-95 ${
                         isDarkMode 
                           ? 'bg-white/5 border-white/5 text-zinc-500 hover:text-white hover:border-white/20' 
-                          : 'bg-white border-indigo-50 text-indigo-400 hover:text-indigo-600 hover:border-indigo-200 shadow-sm'
+                          : 'bg-indigo-50 border-indigo-100 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-100 shadow-sm'
                       }`}
                     >
                       {sug}
@@ -718,13 +718,13 @@ export default function TranslateScreen({ defaultLanguage, isDarkMode }: Transla
           className="space-y-4 pb-20"
         >
           <div className="flex items-center justify-between px-2">
-            <div className="flex items-center gap-2 text-text-muted">
+            <div className="flex items-center gap-2 text-indigo-600">
               <HistoryIcon className="w-4 h-4" />
-              <h3 className="text-[10px] font-bold uppercase tracking-[0.2em]">Histórico Recente</h3>
+              <h3 className="text-[10px] font-black uppercase tracking-[0.2em]">Histórico Recente</h3>
             </div>
             <button 
               onClick={clearHistory}
-              className="text-[10px] font-bold text-red-500/50 hover:text-red-500 uppercase tracking-widest transition-colors"
+              className="text-[10px] font-bold text-red-600 hover:text-red-500 uppercase tracking-widest transition-colors"
             >
               Limpar tudo
             </button>
@@ -740,7 +740,7 @@ export default function TranslateScreen({ defaultLanguage, isDarkMode }: Transla
                 className={`p-5 rounded-2xl border flex flex-col gap-3 group transition-all relative overflow-hidden ${
                   isDarkMode 
                     ? 'bg-surface-card border-surface-border hover:border-zinc-700' 
-                    : 'bg-white border-indigo-50 hover:border-indigo-200 shadow-sm'
+                    : 'bg-white border-slate-200 hover:border-indigo-300 shadow-md shadow-indigo-100/20'
                 }`}
               >
                 <div className="flex items-center justify-between">
@@ -778,10 +778,10 @@ export default function TranslateScreen({ defaultLanguage, isDarkMode }: Transla
                     setTranslatedText(item.translated);
                   }}
                 >
-                  <p className={`text-sm font-medium line-clamp-1 mb-1 ${isDarkMode ? 'text-text-muted' : 'text-indigo-400'}`}>
+                  <p className={`text-sm font-medium line-clamp-1 mb-1 ${isDarkMode ? 'text-text-muted' : 'text-indigo-600/70'}`}>
                     {item.original}
                   </p>
-                  <p className={`text-base font-bold ${isDarkMode ? 'text-text-main' : 'text-indigo-950'}`}>
+                  <p className={`text-base font-bold ${isDarkMode ? 'text-text-main' : 'text-indigo-900'}`}>
                     {item.translated}
                   </p>
                 </div>

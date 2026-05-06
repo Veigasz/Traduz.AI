@@ -63,7 +63,7 @@ export default function FavoritesScreen({ defaultLanguage, onSetDefaultLanguage,
         
         <div className="relative">
           <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-            <Search className={`w-5 h-5 ${isDarkMode ? 'text-zinc-500' : 'text-indigo-300'}`} />
+            <Search className={`w-5 h-5 ${isDarkMode ? 'text-zinc-500' : 'text-indigo-500'}`} />
           </div>
           <input 
             value={searchQuery}
@@ -71,7 +71,7 @@ export default function FavoritesScreen({ defaultLanguage, onSetDefaultLanguage,
             className={`w-full border rounded-2xl py-4 pl-12 pr-4 text-sm focus:ring-4 focus:ring-indigo-500/20 shadow-xl transition-all outline-none ${
               isDarkMode 
                 ? 'bg-surface-card border-surface-border text-text-main placeholder-zinc-700' 
-                : 'bg-white border-indigo-100 text-indigo-950 placeholder-indigo-200'
+                : 'bg-white border-indigo-100 text-indigo-950 placeholder-indigo-400'
             }`}
             placeholder="Pesquisar idioma..."
           />
@@ -113,9 +113,9 @@ export default function FavoritesScreen({ defaultLanguage, onSetDefaultLanguage,
         <div className="space-y-4">
           {favorites.length === 0 ? (
             <div className={`p-10 text-center border-2 border-dashed rounded-[2.5rem] ${
-              isDarkMode ? 'border-zinc-800 text-zinc-600' : 'border-indigo-50 text-indigo-200'
+              isDarkMode ? 'border-zinc-800 text-zinc-600' : 'border-indigo-100 text-indigo-400'
             }`}>
-              <Heart className="w-8 h-8 mx-auto mb-2 opacity-20" />
+              <Heart className="w-8 h-8 mx-auto mb-2 opacity-50" />
               <p className="text-xs font-bold uppercase tracking-widest">Nenhuma tradução salva</p>
             </div>
           ) : (

@@ -20,14 +20,14 @@ import SettingsScreen from './screens/SettingsScreen';
 type Screen = 'chat' | 'translate' | 'camera' | 'favorites' | 'settings';
 
 export default function App() {
-  const [activeScreen, setActiveScreen] = useState<Screen>('translate');
+  const [activeScreen, setActiveScreen] = useState<Screen>('chat');
   const [showPrivacy, setShowPrivacy] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [defaultLanguage, setDefaultLanguage] = useState('Português (BR)');
 
   if (showPrivacy) {
     return (
-      <div className={`flex flex-col h-screen w-full items-center justify-center text-center p-6 ${isDarkMode ? 'bg-surface text-white' : 'bg-white text-zinc-900'}`}>
+      <div className={`flex flex-col h-screen w-full items-center justify-center text-center p-6 ${isDarkMode ? 'bg-surface text-text-main' : 'bg-white text-indigo-950'}`}>
         <motion.div 
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -144,9 +144,9 @@ export default function App() {
       {/* Main Content */}
       <main 
         id="main-content"
-        className={`flex-1 overflow-y-auto relative scrollbar-hide mesh-gradient ${isDarkMode ? 'bg-surface/50' : 'bg-zinc-50/30'}`}
+        className={`flex-1 overflow-y-auto relative scrollbar-hide mesh-gradient ${isDarkMode ? 'bg-surface/50' : 'bg-surface'}`}
       >
-        <AnimatePresence mode="wait text-indigo-400">
+        <AnimatePresence mode="wait">
           <motion.div
             key={activeScreen}
             initial={{ opacity: 0, y: 10 }}
@@ -185,7 +185,7 @@ export default function App() {
                   ? isDarkMode ? 'text-white' : 'text-indigo-600' 
                   : isDarkMode 
                     ? 'text-zinc-500 hover:text-zinc-300' 
-                    : 'text-indigo-200 hover:text-indigo-500'
+                    : 'text-indigo-400 hover:text-indigo-600'
               }`}
             >
               <div className={`p-2.5 rounded-2xl transition-all duration-500 ${

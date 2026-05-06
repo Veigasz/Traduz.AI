@@ -181,12 +181,12 @@ export default function ChatScreen({ isDarkMode }: ChatScreenProps) {
   };
 
   return (
-    <div className={`flex flex-col h-full transition-colors relative ${isDarkMode ? 'bg-zinc-950/50' : 'bg-indigo-50/20'}`}>
+    <div className={`flex flex-col h-full transition-colors relative ${isDarkMode ? 'bg-zinc-950/50' : 'bg-surface'}`}>
       {/* Header with History Toggle */}
       <div 
         role="region" 
         aria-label="Controles do Chat"
-        className={`p-4 flex items-center justify-between border-b ${isDarkMode ? 'border-white/5 bg-zinc-950/50' : 'border-indigo-100 bg-white/50'} backdrop-blur-md sticky top-0 z-20`}>
+        className={`p-4 flex items-center justify-between border-b ${isDarkMode ? 'border-white/5 bg-zinc-950/50' : 'border-indigo-100 bg-white/80'} backdrop-blur-md sticky top-0 z-20 shadow-sm shadow-indigo-100/10`}>
         <div className="flex items-center gap-3">
           <button 
             onClick={() => setShowHistory(!showHistory)}
@@ -197,8 +197,8 @@ export default function ChatScreen({ isDarkMode }: ChatScreenProps) {
             <History className="w-5 h-5" />
           </button>
           <div className="flex flex-col">
-            <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${isDarkMode ? 'text-zinc-500' : 'text-indigo-400'}`}>Chat History</span>
-            <span className={`text-[10px] font-bold opacity-50 ${isDarkMode ? 'text-white' : 'text-indigo-900'}`}>{sessions.length} sessões</span>
+            <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${isDarkMode ? 'text-zinc-500' : 'text-indigo-500'}`}>Chat History</span>
+            <span className={`text-[10px] font-bold opacity-50 ${isDarkMode ? 'text-white' : 'text-indigo-950'}`}>{sessions.length} sessões</span>
           </div>
         </div>
         <button 
@@ -306,7 +306,7 @@ export default function ChatScreen({ isDarkMode }: ChatScreenProps) {
       {/* Date Divider */}
       <div className="flex justify-center my-6">
         <span className={`px-4 py-1.5 border text-[10px] font-black rounded-full uppercase tracking-[0.2em] leading-none ${
-          isDarkMode ? 'bg-zinc-900 border-zinc-800 text-zinc-500' : 'bg-white border-indigo-100 text-indigo-400'
+          isDarkMode ? 'bg-zinc-900 border-zinc-800 text-zinc-500' : 'bg-white border-indigo-200 text-indigo-500'
         }`}>
           Hoje
         </span>
@@ -320,7 +320,7 @@ export default function ChatScreen({ isDarkMode }: ChatScreenProps) {
             className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}
           >
             <span className={`text-[10px] font-bold mb-1.5 px-3 uppercase tracking-widest ${
-              isDarkMode ? 'text-zinc-600' : 'text-indigo-300'
+              isDarkMode ? 'text-zinc-600' : 'text-indigo-500'
             }`}>
               {msg.sender === 'user' ? 'Você' : 'Traduza.AI'}
             </span>
@@ -362,7 +362,7 @@ export default function ChatScreen({ isDarkMode }: ChatScreenProps) {
                 )}
                 
                 <div className={`text-[10px] font-mono tracking-tighter text-right opacity-70 ml-auto ${
-                  msg.sender === 'user' ? 'text-indigo-100' : isDarkMode ? 'text-zinc-500' : 'text-indigo-300'
+                  msg.sender === 'user' ? 'text-indigo-100' : isDarkMode ? 'text-zinc-500' : 'text-indigo-500'
                 }`}>
                   {msg.timestamp}
                 </div>
@@ -373,7 +373,7 @@ export default function ChatScreen({ isDarkMode }: ChatScreenProps) {
         {isTyping && (
           <div className="flex flex-col items-start">
             <span className={`text-[10px] font-bold mb-1.5 px-3 uppercase tracking-widest ${
-              isDarkMode ? 'text-zinc-600' : 'text-indigo-300'
+              isDarkMode ? 'text-zinc-600' : 'text-indigo-500'
             }`}>Traduza.AI</span>
             <div className={`px-6 py-5 rounded-3xl rounded-tl-none border shadow-xl ${
               isDarkMode ? 'bg-zinc-900 border-zinc-800' : 'bg-white border-indigo-100'
@@ -402,7 +402,7 @@ export default function ChatScreen({ isDarkMode }: ChatScreenProps) {
               className={`px-5 py-2 text-[10px] font-bold rounded-full transition-all ${
                 chatLang === 'Português' 
                   ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' 
-                  : isDarkMode ? 'text-zinc-500 hover:text-zinc-300' : 'text-indigo-300 hover:text-indigo-600'
+                  : isDarkMode ? 'text-zinc-500 hover:text-zinc-300' : 'text-indigo-500 hover:text-indigo-700'
               }`}
             >
               Português
@@ -420,7 +420,7 @@ export default function ChatScreen({ isDarkMode }: ChatScreenProps) {
               className={`px-5 py-2 text-[10px] font-bold rounded-full transition-all ${
                 chatLang === 'Inglês' 
                   ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' 
-                  : isDarkMode ? 'text-zinc-500 hover:text-zinc-300' : 'text-indigo-300 hover:text-indigo-600'
+                  : isDarkMode ? 'text-zinc-500 hover:text-zinc-300' : 'text-indigo-500 hover:text-indigo-700'
               }`}
             >
               Inglês
@@ -445,7 +445,7 @@ export default function ChatScreen({ isDarkMode }: ChatScreenProps) {
               placeholder="Digite aqui..." 
               aria-label="Mensagem do chat"
               className={`flex-1 bg-transparent border-none focus:ring-0 text-sm font-medium outline-none ${
-                isDarkMode ? 'text-white placeholder-zinc-700' : 'text-indigo-950 placeholder-indigo-200'
+                isDarkMode ? 'text-white placeholder-zinc-700' : 'text-indigo-950 placeholder-indigo-400'
               }`}
             />
             <button 

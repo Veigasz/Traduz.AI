@@ -82,7 +82,7 @@ export default function CameraScreen({ isDarkMode }: CameraScreenProps) {
       <div className="w-full max-w-md mb-8 text-center mt-6 z-10">
         <p className={`text-2xl font-bold tracking-tighter mb-2 ${isDarkMode ? 'text-white' : 'text-indigo-950'}`}>Câmera em tempo real</p>
         <p className={`text-xs px-4 uppercase tracking-[0.2em] font-bold ${
-          isDarkMode ? 'text-zinc-500' : 'text-indigo-400'
+          isDarkMode ? 'text-zinc-500' : 'text-indigo-500'
         }`}>
           Visão Inteligente Traduza.AI
         </p>
@@ -158,7 +158,7 @@ export default function CameraScreen({ isDarkMode }: CameraScreenProps) {
               }`}
             >
               <div className="flex justify-between items-start mb-2">
-                <span className="text-[10px] font-black uppercase tracking-widest text-indigo-500">Tradução Detectada</span>
+                <span className="text-[10px] font-black uppercase tracking-widest text-indigo-600">Tradução Detectada</span>
                 <button onClick={() => setResult(null)} className="p-1 hover:bg-black/5 rounded-full">
                   <X className="w-4 h-4" />
                 </button>

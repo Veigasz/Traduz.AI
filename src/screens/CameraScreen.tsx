@@ -111,16 +111,16 @@ export default function CameraScreen({ isDarkMode }: CameraScreenProps) {
   };
 
   return (
-    <div className={`flex flex-col items-center h-full w-full transition-colors relative overflow-hidden bg-black`}>
+    <div className={`flex flex-col items-center h-screen w-full transition-colors relative overflow-hidden bg-black`}>
       {/* Instructional Header */}
-      <div className="w-full max-w-md px-6 text-center mt-6 z-20 absolute top-10 pointer-events-none">
-        <p className={`text-2xl font-black tracking-tighter mb-2 text-white drop-shadow-lg`}>Visão em tempo real</p>
-        <p className={`text-[10px] px-4 uppercase tracking-[0.3em] font-black text-indigo-400 drop-shadow-md`}>
+      <div className="w-full max-w-md px-6 text-center mt-10 z-20 absolute top-0 pointer-events-none">
+        <p className={`text-2xl font-black tracking-tighter mb-2 text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]`}>Visão em tempo real</p>
+        <p className={`text-[10px] px-4 uppercase tracking-[0.3em] font-black text-indigo-400 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]`}>
           Inteligência Traduza.AI
         </p>
       </div>
 
-      <div className={`relative w-full h-full flex-1 overflow-hidden`}>
+      <div className={`absolute inset-0 w-full h-full z-10 overflow-hidden`}>
         <video 
           ref={videoRef}
           autoPlay 

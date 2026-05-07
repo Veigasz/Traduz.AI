@@ -1,17 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
 
-let ai: GoogleGenAI | null = null;
-
-export function getGeminiModel() {
-  if (!ai) {
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
-      throw new Error("GEMINI_API_KEY is not defined");
-    }
-    ai = new GoogleGenAI({ apiKey });
-  }
-  return ai;
-}
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY as string });
 
 export type TranslationMode = 'Standard' | 'Formal' | 'Casual' | 'Literal';
 
@@ -21,8 +10,6 @@ export async function translateText(
   targetLang: string, 
   mode: TranslationMode = 'Standard'
 ) {
-  const client = getGeminiModel();
-  
   const systemPrompt = `You are Traduza.AI, a high-quality translation engine. 
   Your goal is to translate text from ${sourceLang === 'Auto' ? 'the detected language' : sourceLang} to ${targetLang}.
   
@@ -44,14 +31,14 @@ export async function translateText(
   """`;
 
   try {
-    const response = await client.models.generateContent({
+    const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
       contents: systemPrompt,
     });
     
     return {
       text: response.text || "No translation result.",
-      detectedLanguage: sourceLang === 'Auto' ? (targetLang === 'English' ? 'Portuguese' : 'English') : null // Mocking detection for now as Gemini doesn't always return metadata easily in simple generateContent
+      detectedLanguage: sourceLang === 'Auto' ? 'Detected' : null
     };
   } catch (error) {
     console.error("Translation error:", error);
@@ -59,11 +46,9 @@ export async function translateText(
   }
 }
 
-export async function chatAssistant(message: string, history: { role: 'user' | 'model', parts: { text: string }[] }[], targetLang: string = 'Portuguese') {
-  const client = getGeminiModel();
-  
+export async function chatAssistant(message: string, history: any[], targetLang: string = 'Portuguese') {
   try {
-    const response = await client.models.generateContent({
+    const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
       contents: [...history, { role: 'user', parts: [{ text: message }] }],
       config: {
@@ -78,25 +63,20 @@ export async function chatAssistant(message: string, history: { role: 'user' | '
 }
 
 export async function translateImage(base64Image: string, targetLang: string = 'Portuguese') {
-  const client = getGeminiModel();
-  
   try {
-    const response = await client.models.generateContent({
+    const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
-      contents: [
-        {
-          role: 'user',
-          parts: [
-            { text: `Identify any text in this image and translate it to ${targetLang}. Return ONLY the translated text. If no text is found, say "No text detected".` },
-            {
-              inlineData: {
-                mimeType: "image/jpeg",
-                data: base64Image
-              }
+      contents: {
+        parts: [
+          { text: `Identify any text in this image and translate it to ${targetLang}. Return ONLY the translated text. If no text is found, say "No text detected".` },
+          {
+            inlineData: {
+              mimeType: "image/jpeg",
+              data: base64Image
             }
-          ]
-        }
-      ],
+          }
+        ]
+      }
     });
     return response.text || "No text detected.";
   } catch (error) {
@@ -104,4 +84,3 @@ export async function translateImage(base64Image: string, targetLang: string = '
     throw error;
   }
 }
-

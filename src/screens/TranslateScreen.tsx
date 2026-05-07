@@ -52,6 +52,38 @@ const LANGUAGES = [
 
 const MODES: TranslationMode[] = ['Standard', 'Formal', 'Casual', 'Literal'];
 
+const VOICE_LANG_MAP: Record<string, string> = {
+  'Português': 'pt-BR',
+  'English': 'en-US',
+  'Spanish': 'es-ES',
+  'French': 'fr-FR',
+  'German': 'de-DE',
+  'Italian': 'it-IT',
+  'Japanese': 'ja-JP',
+  'Chinese': 'zh-CN',
+  'Russian': 'ru-RU',
+  'Arabic': 'ar-SA',
+  'Hindi': 'hi-IN',
+  'Hebrew': 'he-IL',
+  'Turkish': 'tr-TR',
+  'Dutch': 'nl-NL',
+  'Korean': 'ko-KR',
+  'Greek': 'el-GR',
+  'Thai': 'th-TH',
+  'Swedish': 'sv-SE'
+};
+
+const RECOGNITION_LANG_MAP: Record<string, string> = {
+  'Português': 'pt-BR',
+  'English': 'en-US',
+  'Spanish': 'es-ES',
+  'French': 'fr-FR',
+  'German': 'de-DE',
+  'Italian': 'it-IT',
+  'Japanese': 'ja-JP',
+  'Chinese': 'zh-CN'
+};
+
 interface TranslateScreenProps {
   defaultLanguage: string;
   isDarkMode: boolean;
@@ -81,6 +113,10 @@ export default function TranslateScreen({ defaultLanguage, isDarkMode }: Transla
   const [isGeneratingSuggestions, setIsGeneratingSuggestions] = useState(false);
   
   const recognitionRef = useRef<any>(null);
+
+  const filteredLanguages = React.useMemo(() => {
+    return LANGUAGES.filter(l => l.name.toLowerCase().includes(langSearch.toLowerCase()));
+  }, [langSearch]);
   
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -188,9 +224,16 @@ export default function TranslateScreen({ defaultLanguage, isDarkMode }: Transla
       targetLang,
       timestamp: Date.now()
     };
-    const updatedHistory = [newItem, ...history.slice(0, 49)]; // Keep last 50
+    const updatedHistory = [newItem, ...history.slice(0, 49)];
     setHistory(updatedHistory);
-    localStorage.setItem('translation_history', JSON.stringify(updatedHistory));
+    
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(() => {
+        localStorage.setItem('translation_history', JSON.stringify(updatedHistory));
+      });
+    } else {
+      localStorage.setItem('translation_history', JSON.stringify(updatedHistory));
+    }
   };
 
   const toggleFavorite = () => {
@@ -210,7 +253,14 @@ export default function TranslateScreen({ defaultLanguage, isDarkMode }: Transla
     }
     
     setFavorites(updated);
-    localStorage.setItem('translation_favorites', JSON.stringify(updated));
+    
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(() => {
+        localStorage.setItem('translation_favorites', JSON.stringify(updated));
+      });
+    } else {
+      localStorage.setItem('translation_favorites', JSON.stringify(updated));
+    }
   };
 
   const isFavorited = favorites.some(f => f.original === inputText && f.translated === translatedText);
@@ -237,18 +287,7 @@ export default function TranslateScreen({ defaultLanguage, isDarkMode }: Transla
         recognitionRef.current.stop();
       } else {
         setListeningError(null);
-        // Map language names to BCP 47 tags
-        const langMap: Record<string, string> = {
-          'Português': 'pt-BR',
-          'English': 'en-US',
-          'Spanish': 'es-ES',
-          'French': 'fr-FR',
-          'German': 'de-DE',
-          'Italian': 'it-IT',
-          'Japanese': 'ja-JP',
-          'Chinese': 'zh-CN'
-        };
-        recognitionRef.current.lang = langMap[sourceLang] || 'pt-BR';
+        recognitionRef.current.lang = RECOGNITION_LANG_MAP[sourceLang] || 'pt-BR';
         recognitionRef.current.start();
       }
     } catch (err) {
@@ -259,7 +298,7 @@ export default function TranslateScreen({ defaultLanguage, isDarkMode }: Transla
     }
   };
 
-  const handleTranslate = async () => {
+  const handleTranslate = React.useCallback(async () => {
     if (!inputText.trim()) return;
     
     // Check Cache first (Offline mode preparation)
@@ -301,7 +340,7 @@ export default function TranslateScreen({ defaultLanguage, isDarkMode }: Transla
     } finally {
       setIsTranslating(false);
     }
-  };
+  }, [inputText, sourceLang, targetLang, translationMode, isOnline, history]);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(translatedText);
@@ -315,38 +354,16 @@ export default function TranslateScreen({ defaultLanguage, isDarkMode }: Transla
     setError(null);
   };
 
-  const speak = (text: string, langName: string) => {
+  const speak = React.useCallback((text: string, langName: string) => {
     if (!text || !window.speechSynthesis) return;
     
     // Cancel any ongoing speech
     window.speechSynthesis.cancel();
     
     const utterance = new SpeechSynthesisUtterance(text);
-    
-    const langMap: Record<string, string> = {
-      'Português': 'pt-BR',
-      'English': 'en-US',
-      'Spanish': 'es-ES',
-      'French': 'fr-FR',
-      'German': 'de-DE',
-      'Italian': 'it-IT',
-      'Japanese': 'ja-JP',
-      'Chinese': 'zh-CN',
-      'Russian': 'ru-RU',
-      'Arabic': 'ar-SA',
-      'Hindi': 'hi-IN',
-      'Hebrew': 'he-IL',
-      'Turkish': 'tr-TR',
-      'Dutch': 'nl-NL',
-      'Korean': 'ko-KR',
-      'Greek': 'el-GR',
-      'Thai': 'th-TH',
-      'Swedish': 'sv-SE'
-    };
-    
-    utterance.lang = langMap[langName] || 'pt-BR';
+    utterance.lang = VOICE_LANG_MAP[langName] || 'pt-BR';
     window.speechSynthesis.speak(utterance);
-  };
+  }, []);
 
   const swapLanguages = () => {
     setSourceLang(targetLang);
@@ -547,8 +564,8 @@ export default function TranslateScreen({ defaultLanguage, isDarkMode }: Transla
             className="space-y-3"
           >
             <h3 className="text-[10px] font-bold text-text-muted uppercase tracking-[0.2em] px-2">Resultado</h3>
-            <div className="bg-surface-card rounded-3xl p-6 min-h-[120px] border border-surface-border relative group overflow-hidden">
-              <div className="absolute top-0 left-0 w-1.5 h-full bg-indigo-500/40" />
+            <div className="bg-surface-card rounded-3xl p-6 min-h-[120px] border border-surface-border relative group overflow-hidden ai-border-glow shadow-2xl">
+              <div className="absolute top-0 left-0 w-1.5 h-full bg-primary" />
               
               {isFromCache && (
                 <div className="absolute top-4 right-4 flex items-center gap-1.5 px-2 py-1 bg-surface border border-surface-border rounded-lg backdrop-blur-md">
@@ -614,70 +631,97 @@ export default function TranslateScreen({ defaultLanguage, isDarkMode }: Transla
             </button>
           </div>
           
-          <div className="space-y-3">
-            {history.map((item) => (
-              <motion.div 
-                layout
-                key={item.id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                className={`p-5 rounded-2xl border flex flex-col gap-3 group transition-all relative overflow-hidden ${
-                  isDarkMode 
-                    ? 'bg-surface-card border-surface-border hover:border-zinc-700' 
-                    : 'bg-white border-slate-200 hover:border-indigo-300 shadow-md shadow-indigo-100/20'
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 opacity-40">
-                    <span className="text-[10px] font-black uppercase tracking-tighter">{item.sourceLang}</span>
-                    <ArrowLeftRight className="w-3 h-3" />
-                    <span className="text-[10px] font-black uppercase tracking-tighter">{item.targetLang}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <button 
-                      onClick={() => navigator.clipboard.writeText(item.translated)}
-                      className={`p-2 rounded-lg transition-colors ${
-                        isDarkMode ? 'hover:bg-zinc-800 text-zinc-500' : 'hover:bg-indigo-50 text-indigo-300'
-                      }`}
-                    >
-                      <Copy className="w-3.5 h-3.5" />
-                    </button>
-                    <button 
-                      onClick={() => deleteHistoryItem(item.id)}
-                      className={`p-2 rounded-lg transition-colors ${
-                        isDarkMode ? 'hover:bg-red-500/10 text-red-500/50 hover:text-red-500' : 'hover:bg-red-50 text-red-300 hover:text-red-500'
-                      }`}
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                </div>
-                
-                <div 
-                  className="cursor-pointer"
-                  onClick={() => {
-                    setSourceLang(item.sourceLang);
-                    setTargetLang(item.targetLang);
-                    setInputText(item.original);
-                    setTranslatedText(item.translated);
-                  }}
+          <div className="space-y-4">
+            <AnimatePresence mode="popLayout">
+              {history.map((item, index) => (
+                <motion.div 
+                  layout
+                  key={item.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ delay: index * 0.05 }}
+                  className={`p-6 rounded-[2rem] border flex flex-col gap-4 group transition-all relative overflow-hidden shadow-sm hover:shadow-2xl ${
+                    isDarkMode 
+                      ? 'bg-surface-card border-surface-border hover:border-primary/30 backdrop-blur-sm shadow-black/20' 
+                      : 'bg-white border-slate-200 hover:border-primary/30 shadow-indigo-100/20'
+                  }`}
                 >
-                  <p className={`text-sm font-medium line-clamp-1 mb-1 ${isDarkMode ? 'text-text-muted' : 'text-indigo-600/70'}`}>
-                    {item.original}
-                  </p>
-                  <p className={`text-base font-bold ${isDarkMode ? 'text-text-main' : 'text-indigo-900'}`}>
-                    {item.translated}
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-1 opacity-20 mt-1">
-                   <Clock className="w-3 h-3" />
-                   <span className="text-[9px] font-bold">
-                    {new Date(item.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                   </span>
-                </div>
-              </motion.div>
-            ))}
+                  <div className="absolute top-0 left-0 w-1.5 h-full bg-primary/20 group-hover:bg-primary transition-colors" />
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                       <div className={`px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest flex items-center gap-1.5 ${isDarkMode ? 'bg-zinc-800 text-zinc-400' : 'bg-slate-100 text-slate-500'}`}>
+                         <span>{LANGUAGES.find(l => l.name === item.sourceLang)?.flag}</span>
+                         <span>{item.sourceLang}</span>
+                       </div>
+                       <ArrowLeftRight className="w-3.5 h-3.5 text-primary opacity-40" />
+                       <div className={`px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest flex items-center gap-1.5 ${isDarkMode ? 'bg-zinc-800 text-zinc-400' : 'bg-slate-100 text-slate-500'}`}>
+                         <span>{LANGUAGES.find(l => l.name === item.targetLang)?.flag}</span>
+                         <span>{item.targetLang}</span>
+                       </div>
+                    </div>
+                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button 
+                        onClick={() => {
+                          navigator.clipboard.writeText(item.translated);
+                          setCopyFeedback(true);
+                        }}
+                        className={`p-2.5 rounded-xl transition-colors ${
+                          isDarkMode ? 'hover:bg-zinc-800 text-zinc-500' : 'hover:bg-indigo-50 text-indigo-300'
+                        }`}
+                        title="Copiar Tradução"
+                      >
+                        <Copy className="w-4 h-4" />
+                      </button>
+                      <button 
+                        onClick={() => deleteHistoryItem(item.id)}
+                        className={`p-2.5 rounded-xl transition-colors ${
+                          isDarkMode ? 'hover:bg-red-500/10 text-red-500/50 hover:text-red-500' : 'hover:bg-red-50 text-red-300 hover:text-red-500'
+                        }`}
+                        title="Excluir"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div 
+                    className="cursor-pointer space-y-2"
+                    onClick={() => {
+                      setSourceLang(item.sourceLang);
+                      setTargetLang(item.targetLang);
+                      setInputText(item.original);
+                      setTranslatedText(item.translated);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                  >
+                    <p className={`text-[13px] font-medium line-clamp-2 opacity-50`}>
+                      {item.original}
+                    </p>
+                    <p className={`text-xl font-black tracking-tighter leading-tight ${isDarkMode ? 'text-text-main' : 'text-indigo-950'}`}>
+                      {item.translated}
+                    </p>
+                  </div>
+  
+                  <div className="flex items-center justify-between mt-2 pt-4 border-t border-surface-border/50">
+                    <div className="flex items-center gap-1.5 opacity-30">
+                       <Clock className="w-3.5 h-3.5" />
+                       <span className="text-[10px] font-bold">
+                        {new Date(item.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                       </span>
+                    </div>
+                    <button 
+                      onClick={() => speak(item.translated, item.targetLang)}
+                      className="p-1 px-3 flex items-center gap-2 rounded-xl text-primary bg-primary/5 hover:bg-primary/10 transition-colors border border-primary/10"
+                    >
+                      <Volume2 className="w-3.5 h-3.5" />
+                      <span className="text-[9px] font-black uppercase tracking-widest">Listen</span>
+                    </button>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </div>
         </motion.section>
       )}
@@ -727,7 +771,7 @@ export default function TranslateScreen({ defaultLanguage, isDarkMode }: Transla
             </div>
 
             <div className="flex-1 overflow-y-auto space-y-2 grid grid-cols-1 scrollbar-hide pb-10">
-              {LANGUAGES.filter(l => l.name.toLowerCase().includes(langSearch.toLowerCase())).map((lang) => {
+              {filteredLanguages.map((lang) => {
                 const current = pickingLang === 'source' ? sourceLang : targetLang;
                 const isSelected = current === lang.name;
                 return (

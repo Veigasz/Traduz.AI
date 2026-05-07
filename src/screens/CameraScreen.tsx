@@ -96,7 +96,7 @@ export default function CameraScreen({ isDarkMode }: CameraScreenProps) {
     const ctx = canvas.getContext('2d');
     if (ctx) {
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      const base64Image = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
+      const base64Image = canvas.toDataURL('image/jpeg', 0.6).split(',')[1];
       
       try {
         const translation = await translateImage(base64Image, 'Portuguese');
@@ -111,21 +111,21 @@ export default function CameraScreen({ isDarkMode }: CameraScreenProps) {
   };
 
   return (
-    <div className={`flex flex-col items-center h-screen w-full transition-colors relative overflow-hidden bg-black`}>
+    <div className={`flex flex-col items-center px-6 h-full flex-1 transition-colors relative overflow-hidden bg-surface`}>
       {/* Instructional Header */}
-      <div className="w-full max-w-md px-6 text-center mt-10 z-20 absolute top-0 pointer-events-none">
-        <p className={`text-2xl font-black tracking-tighter mb-2 text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]`}>Visão em tempo real</p>
-        <p className={`text-[10px] px-4 uppercase tracking-[0.3em] font-black text-indigo-400 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]`}>
-          Inteligência Traduza.AI
+      <div className="w-full max-w-md mb-8 text-center mt-6 z-10">
+        <p className={`text-2xl font-bold tracking-tighter mb-2 text-text-main`}>Câmera em tempo real</p>
+        <p className={`text-xs px-4 uppercase tracking-[0.2em] font-bold text-primary`}>
+          Visão Inteligente Traduza.AI
         </p>
       </div>
 
-      <div className={`absolute inset-0 w-full h-full z-10 overflow-hidden`}>
+      <div className={`relative w-full aspect-square max-w-md rounded-[2.5rem] overflow-hidden shadow-2xl group border bg-surface-card border-surface-border`}>
         <video 
           ref={videoRef}
           autoPlay 
           playsInline
-          className={`w-full h-full object-cover transition-opacity duration-700 ${isStreaming ? 'opacity-100' : 'opacity-0'}`}
+          className={`w-full h-full object-cover transition-opacity ${isStreaming ? 'opacity-100' : 'opacity-0'}`}
         />
 
         {/* Zoom Control Overlay */}
@@ -173,26 +173,13 @@ export default function CameraScreen({ isDarkMode }: CameraScreenProps) {
         
         {/* Scanning Animation */}
         {isStreaming && (
-          <div className="absolute inset-0 pointer-events-none z-20">
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute top-0 left-0 w-full h-full border-[2rem] border-zinc-950/20" />
             <motion.div 
-              animate={{ top: ['10%', '90%', '10%'] }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute left-0 w-full h-1 bg-primary/80 shadow-[0_0_20px_rgba(79,70,229,0.8)]"
+              animate={{ top: ['0%', '100%', '0%'] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+              className="absolute left-0 w-full h-0.5 bg-primary shadow-lg z-20"
             />
-            <div className="absolute inset-0 border-[2rem] border-black/10" />
-          </div>
-        )}
-
-        {/* Floating Action Hint */}
-        {isStreaming && !result && !isTranslating && (
-          <div className="absolute bottom-40 left-1/2 -translate-x-1/2 z-20 pointer-events-none">
-            <motion.div 
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-black/50 backdrop-blur-xl px-6 py-3 rounded-2xl border border-white/10"
-            >
-              <p className="text-white text-[10px] font-black uppercase tracking-widest">Toque no botão para traduzir</p>
-            </motion.div>
           </div>
         )}
 
@@ -217,16 +204,16 @@ export default function CameraScreen({ isDarkMode }: CameraScreenProps) {
         </AnimatePresence>
       </div>
 
-      {/* Controls Container */}
-      <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black via-black/40 to-transparent pt-20 pb-12 px-6 flex flex-col items-center gap-8 z-30">
+      {/* Controls */}
+      <div className="flex-1 w-full max-w-md flex flex-col items-center justify-center gap-8 pb-12 z-10">
         <div className="flex items-center justify-center gap-10">
           <button 
             onClick={() => setFlashOn(!flashOn)}
             aria-label="Alternar Lanterna"
-            className={`w-12 h-12 rounded-2xl border flex items-center justify-center transition-all shadow-lg active:scale-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 bg-white/10 backdrop-blur-xl ${
+            className={`w-12 h-12 rounded-2xl border flex items-center justify-center transition-all shadow-lg active:scale-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
               flashOn 
-                ? 'border-indigo-500 text-indigo-400 shadow-indigo-500/20' 
-                : 'border-white/10 text-white hover:text-indigo-400'
+                ? 'bg-indigo-600 border-indigo-500 text-white shadow-indigo-500/20' 
+                : 'bg-surface-card border-surface-border text-text-muted hover:text-text-main'
             }`}
           >
             <Zap className={`w-5 h-5 ${flashOn ? 'fill-current' : ''}`} />
@@ -236,11 +223,13 @@ export default function CameraScreen({ isDarkMode }: CameraScreenProps) {
             onClick={captureFrame}
             disabled={!isStreaming || isTranslating}
             aria-label="Capturar e Traduzir"
-            className={`w-28 h-28 rounded-full p-2 shadow-[0_0_50px_rgba(79,70,229,0.3)] active:scale-95 transition-all border border-white/20 bg-white/5 backdrop-blur-2xl group relative focus:outline-none focus-visible:ring-2 focus-visible:ring-primary ${isTranslating ? 'opacity-50' : ''}`}
+            className={`w-24 h-24 rounded-full p-2 shadow-2xl active:scale-95 transition-all border group relative focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 focus-visible:ring-offset-4 ${
+              isDarkMode ? 'bg-surface-card border-surface-border focus-visible:ring-offset-zinc-950' : 'bg-white border-surface-border focus-visible:ring-offset-white shadow-indigo-500/5'
+            } ${isTranslating ? 'opacity-50' : ''}`}
           >
-            <div className={`w-full h-full rounded-full border-4 border-white/20 flex items-center justify-center transition-colors group-hover:border-primary/50`}>
-              <div className={`w-16 h-16 rounded-full bg-primary shadow-2xl shadow-primary/40 group-active:scale-90 transition-transform flex items-center justify-center`}>
-                {isTranslating ? <Loader2 className="w-8 h-8 text-white animate-spin" /> : <div className="w-8 h-8 rounded-full border-4 border-white/40" />}
+            <div className={`w-full h-full rounded-full border-4 flex items-center justify-center transition-colors border-surface`}>
+              <div className={`w-16 h-16 rounded-full bg-primary shadow-xl shadow-primary/30 group-active:scale-90 transition-transform flex items-center justify-center`}>
+                {isTranslating ? <Loader2 className="w-8 h-8 text-white animate-spin" /> : <div className="w-6 h-6 rounded-full border-4 border-white/30" />}
               </div>
             </div>
           </button>
@@ -251,7 +240,7 @@ export default function CameraScreen({ isDarkMode }: CameraScreenProps) {
               startCamera();
             }}
             aria-label="Reiniciar Câmera"
-            className={`w-12 h-12 rounded-2xl border flex items-center justify-center transition-all bg-white/10 border-white/10 text-white hover:text-indigo-400 backdrop-blur-xl`}
+            className={`w-12 h-12 rounded-2xl border flex items-center justify-center transition-all shadow-lg active:scale-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 bg-surface-card border-surface-border text-text-muted hover:text-text-main`}
           >
             <RefreshCcw className="w-5 h-5" />
           </button>
@@ -259,9 +248,9 @@ export default function CameraScreen({ isDarkMode }: CameraScreenProps) {
 
         <button 
           aria-label="Carregar foto da galeria"
-          className="flex items-center justify-center gap-3 py-4 px-10 rounded-2xl font-black uppercase text-[10px] tracking-[0.3em] transition-all active:scale-95 border bg-white/10 border-white/10 text-white hover:bg-white/20 backdrop-blur-xl">
-          <Upload className="w-4 h-4 text-indigo-400 group-hover:scale-110 transition-transform" />
-          Importar Foto
+          className={`flex items-center justify-center gap-3 py-5 px-12 rounded-2xl font-bold uppercase text-[10px] tracking-[0.3em] transition-all active:scale-95 shadow-xl group border focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 bg-surface-card border-surface-border text-text-main hover:bg-surface shadow-indigo-500/5`}>
+          <Upload className="w-4 h-4 text-indigo-500 group-hover:scale-110 transition-transform" />
+          Inserir Foto
         </button>
       </div>
     </div>

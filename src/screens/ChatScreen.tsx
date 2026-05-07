@@ -306,20 +306,23 @@ export default function ChatScreen({ isDarkMode }: ChatScreenProps) {
       </div>
 
       {/* Messages */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto px-6 space-y-8 pb-40 scrollbar-hide">
-        {messages.map((msg) => (
-          <div 
-            key={msg.id} 
-            className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}
-          >
+      <div ref={scrollRef} className="flex-1 overflow-y-auto px-6 space-y-8 pb-44 scrollbar-hide">
+        <AnimatePresence mode="popLayout">
+          {messages.map((msg) => (
+            <motion.div 
+              key={msg.id} 
+              initial={{ opacity: 0, y: 10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}
+            >
             <span className={`text-[10px] font-bold mb-1.5 px-3 uppercase tracking-widest text-primary opacity-50`}>
               {msg.sender === 'user' ? 'Você' : 'Traduza.AI'}
             </span>
             <div 
               className={`max-w-[85%] px-6 py-5 rounded-3xl shadow-xl transition-all relative group ${
                 msg.sender === 'user' 
-                ? 'bg-primary text-white rounded-tr-none shadow-primary/10' 
-                : 'bg-surface-card text-text-main rounded-tl-none border border-surface-border shadow-black/5'
+                ? 'bg-primary text-white rounded-tr-none shadow-primary/20' 
+                : 'bg-surface-card text-text-main rounded-tl-none border border-surface-border shadow-black/5 ai-glow'
               }`}
             >
               <p className="text-[15px] leading-relaxed whitespace-pre-wrap font-medium">{msg.text}</p>
@@ -357,8 +360,9 @@ export default function ChatScreen({ isDarkMode }: ChatScreenProps) {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         ))}
+        </AnimatePresence>
         {isTyping && (
           <div className="flex flex-col items-start">
             <span className={`text-[10px] font-bold mb-1.5 px-3 uppercase tracking-widest ${

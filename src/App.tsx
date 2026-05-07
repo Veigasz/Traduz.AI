@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   MessageCircle, 
@@ -8,14 +8,28 @@ import {
   Settings, 
   Mic, 
   User,
-  ArrowLeft,
-  ShieldCheck
+  ShieldCheck,
+  Loader2
 } from 'lucide-react';
-import TranslateScreen from './screens/TranslateScreen';
-import CameraScreen from './screens/CameraScreen';
-import ChatScreen from './screens/ChatScreen';
-import FavoritesScreen from './screens/FavoritesScreen';
-import SettingsScreen from './screens/SettingsScreen';
+
+// Optimized dynamic imports
+const TranslateScreen = lazy(() => import('./screens/TranslateScreen'));
+const CameraScreen = lazy(() => import('./screens/CameraScreen'));
+const ChatScreen = lazy(() => import('./screens/ChatScreen'));
+const FavoritesScreen = lazy(() => import('./screens/FavoritesScreen'));
+const SettingsScreen = lazy(() => import('./screens/SettingsScreen'));
+
+const ScreenLoader = () => (
+  <div className="flex flex-col items-center justify-center h-full gap-4 opacity-50">
+    <div className="relative">
+      <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+      <div className="absolute inset-0 flex items-center justify-center">
+        <Languages className="w-4 h-4 text-primary animate-pulse" />
+      </div>
+    </div>
+    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Sincronizando...</span>
+  </div>
+);
 
 type Screen = 'chat' | 'translate' | 'camera' | 'favorites' | 'settings';
 
@@ -163,7 +177,9 @@ export default function App() {
             className="h-full focus:outline-none"
             tabIndex={-1}
           >
-            {renderScreen()}
+            <Suspense fallback={<ScreenLoader />}>
+              {renderScreen()}
+            </Suspense>
           </motion.div>
         </AnimatePresence>
       </main>
